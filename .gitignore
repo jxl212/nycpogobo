@@ -1,0 +1,14 @@
+.google-cookie
+discord.log
+settings/*.json
+*~
+*__pycache__*
+*.json
+*.pyc
+*.dll
+settings/*
+!settings/*.sample
+settings_backup/*
+venv/
+.DS_Store
+tmp/*
