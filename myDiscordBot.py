@@ -238,7 +238,7 @@ async def on_message(message):
 			else:
 				cprint("Error for channel {}".format(neighborhood),"red")
 
-			if int(m['iv'])>=80 and int(m['level'])>=20:
+			if int(m['iv'])>=90 and int(m['level'])>=25:
 				send_groupme(message.clean_content,lat,lon)
 
 
