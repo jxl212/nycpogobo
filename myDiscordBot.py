@@ -125,16 +125,16 @@ def get_name(msg):
 	return d['name']
 
 def get_nycpokemap_url(msg):
-    match = re.match(r'.*(?P<link>https\://nycpokemap\.com.*?) ',msg.content.replace("\n"," "))
-    if match and link in match.groupdict().keys():
-        return = match['link']
-    return ""
+	match = re.match(r'.*(?P<link>https\://nycpokemap\.com.*?) ',msg.content.replace("\n"," "))
+	if match and link in match.groupdict().keys():
+		return match['link']
+	return ""
 
 def get_googlmap_url(msg):
-    match = re.match(r'.*(?P<link>https\://maps\.google\.com.*? ',msg.content.replace("\n"," "))
-    if match and link in match.groupdict().keys():
-        return = match['link']
-    return ""
+	match = re.match(r'.*(?P<link>https\://maps\.google\.com.*? ',msg.content.replace("\n"," "))
+	if match and link in match.groupdict().keys():
+		return match['link']
+	return ""
 
 def get_color_from_stats(a,d,s):
 	color = 0x000000
@@ -194,7 +194,7 @@ async def on_message(message):
 	elif m and m['gender']=='Male':
 		gender = "♂"
 
-    map_link = get_nycpokemap_url(message)
+	map_link = get_nycpokemap_url(message)
 	nycpokemap_link = map_link
 
 	gmap_link = get_googlmap_url(message)
