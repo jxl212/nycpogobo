@@ -1,13 +1,11 @@
+import os
 import groupy
-
 from groupy import Client
 from slackclient import SlackClient
 
 groupme_client = Client.from_token(os.environ.get('GROUPME_TOKEN'))
-groupme_client = Client.from_token(os.environ.get('GROUPME_TOKEN'))
 groupme_bot=[b for b in groupme_client.bots.list() if b.data['bot_id']=='074f9a78a1efbcf9f0d44e60a5'][0]
 
-slack_client = SlackClient(os.environ.get('SLACK_BOT_TOKEN'))
 slack_client = SlackClient(os.environ.get('SLACK_BOT_TOKEN'))
 
 def send_groupme(msg,lat=None,lon=None):

@@ -1,16 +1,13 @@
 import os, sys
 import discord
 import logging
-import os
 import datetime
-import discord
 import asyncio
 from discord.ext.commands import Bot
 from discord.ext import commands
 import platform
 import re
 import collections
-import pprint
 from pymongo import MongoClient
 from termcolor import cprint, colored
 
