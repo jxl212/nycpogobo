@@ -194,6 +194,7 @@ async def on_message(message):
 	elif m and m['gender']=='Male':
 		gender = "♂"
 
+	name=get_name(message)
 	map_link = get_nycpokemap_url(message)
 	nycpokemap_link = map_link
 
@@ -207,13 +208,19 @@ async def on_message(message):
 	txt = message.channel.name,"["+str(boro) + "/" +str(neighborhood) + "] - {}{}".format(txt, map_link)
 	ctxt = colored(txt,"white")
 
-	embed = discord.Embed(title=m['name'], description=content, color=0x000000)
+	embed = discord.Embed(title=name, description=content, color=0x000000)
 
 	if len(nycpokemap_link) > 0 :
 		embed.url=nycpokemap_link
-	if m['name']:
-		embed.set_thumbnail(url="https://rankedboost.com/wp-content/plugins/ice/pokemon/{}-Pokemon-Go.png".format(m['name']))
+	if name != "Egg":
+		embed.set_thumbnail(url="https://rankedboost.com/wp-content/plugins/ice/pokemon/{}-Pokemon-Go.png".format(name))
+	else:
+		if "4" in message.content.split("\n")[0]:
+			embed.set_thumbnail(url="https://pro-rankedboost.netdna-ssl.com/wp-content/uploads/2017/06/Pokemon-GO-Rare-Egg-Yellow.png")
+		else:
+			embed.set_thumbnail(url="https://pro-rankedboost.netdna-ssl.com/wp-content/uploads/2017/06/Pokemon-GO-Legendary-Egg-120x120.png")
 	color=0x00000
+
 
 	if int(m['iv']) == 100:
 		color|=0xD1C10F
