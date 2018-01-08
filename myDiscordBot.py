@@ -117,7 +117,7 @@ def get_atk_def_sta(msg):
 	return d
 def get_name(msg):
 	d=collections.defaultdict(str)
-    first_line = str(msg).lstrip().split("\n")[0]
+	first_line = str(msg).lstrip().split("\n")[0]
 	match = re.match(r".*?\*\*(?P<name>\w+)\*\*", first_line)
 	if match:
 		d=match.groupdict()
