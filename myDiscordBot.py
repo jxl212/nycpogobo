@@ -13,27 +13,21 @@ import collections
 import pprint
 from pymongo import MongoClient
 from termcolor import cprint, colored
-import groupy
-from groupy import Client
-from slackclient import SlackClient
 
-
+from utils import *
+	
 logger = logging.getLogger("discord")
 logger.setLevel(logging.WARNING)
 stdout_handler = logging.StreamHandler(sys.stdout)
 stdout_handler.setLevel(logging.WARNING)
 
 client = discord.Client()
-slack_client = SlackClient(os.environ.get('SLACK_BOT_TOKEN'))
-groupme_client = Client.from_token(os.environ.get('GROUPME_TOKEN'))
+
 mongodb_user=os.environ.get("MONGO_USER")
 mongodb_pass=os.environ.get("MONGO_PASS")
 
 mongo_client = MongoClient("mongodb+srv://{}:{}@cluster0-m6kv9.mongodb.net/nyc".format(mongodb_user,mongodb_pass))
 client = discord.Client()
-slack_client = SlackClient(os.environ.get('SLACK_BOT_TOKEN'))
-groupme_client = Client.from_token(os.environ.get('GROUPME_TOKEN'))
-groupme_bot=[b for b in groupme_client.bots.list() if b.data['bot_id']=='074f9a78a1efbcf9f0d44e60a5'][0]
 print("mongodb guild version: "+colored(mongo_client.server_info()['version'],attrs=['bold']))
 
 db = mongo_client.nyc
@@ -47,29 +41,6 @@ google_map_pattern = re.compile(r'\*\*Google Map\*\*: \<https\://maps\.google\.c
 nycpokemap_pattern = re.compile(r'\*\*Map\*\*: \<https\://nycpokemap\.com\#.*\>')
 
 
-def send_groupme(msg,lat=None,lon=None):
-	location=None
-	if lat != None and lon != None:
-		location=groupy.attachments.Location(name="loc",lat=lat,lng=lon)
-
-	content = str(msg).split("\n")
-	if len(content)>3:
-		content=content[:-2]
-	content = "\n".join(content)
-	content = re.sub(r'L30\+ ','',content)
-	content = re.sub(r'\*+','',content)
-	content = re.sub(r'[\<|\>]','',content)
-	content = re.sub(r'Map: ','',content)
-	content = re.sub(r'\n+','\n',content)
-	content = re.sub(r'\[.*?\]\s?','',content)
-
-	attachments=None
-	if location != None:
-		attachments=[location]
-	groupme_bot.post(text=content,attachments=attachments)
-
-def send_slack(msg,lat=None,lon=None):
-	slack_client.api_call("chat.postMessage",channel="general",text=re.sub(r'\*\*','`',msg))
 
 
 
@@ -77,73 +48,6 @@ def send_slack(msg,lat=None,lon=None):
 async def on_ready():
 	print('Logged in as '+colored(client.user.name,attrs=['bold'])+' (ID:'+str(client.user.id)+')')
 	print('Connected to '+colored(str(len(set(client.get_all_channels()))),attrs=['bold'])+' channels from guilds:'+', '.join([colored("{name} ({id})".format(name=s.name,id=str(s.id)),attrs=['bold']) for s in client.guilds]))
-
-
-
-def get_lat_lon_from_message(message):
-	lat_lon = re.findall(r'\*\*Google Map\*\*: \<https\://maps\.google\.com/maps\?q\=(?P<lat>.*),(?P<lon>.*)\>',message.content)
-	lat=float(0)
-	lon=float(0)
-	if lat_lon :
-		lat = float(lat_lon[0][0])
-		lon = float(lat_lon[0][1])
-
-	return lat,lon
-
-def get_boro_from(lat,lon):
-	if None in [lat,lon]:
-		return None
-	boros=db.boro.find_one({ "geometry": { "$geoIntersects": { "$geometry": { "type": "Point", "coordinates": [ lon, lat ] } } } },{"properties.BoroName":1})
-	if boros:
-		boro = str(boros['properties']['BoroName'])
-		return boro
-	return None
-
-def get_neighborhood_from(lat,lon):
-	if None in [lat,lon]:
-		return None
-	name_field="name2"
-	neighborhoods=db.neighborhoods.find_one({ "geometry": { "$geoIntersects": { "$geometry": { "type": "Point", "coordinates": [ float(lon), float(lat) ] } } } },{name_field:1})
-	if neighborhoods :
-		return str(neighborhoods[name_field])
-	return None
-
-def get_atk_def_sta(msg):
-	d=collections.defaultdict(int)
-	match = re.match(r".*?IV\*\*\: (?P<atk>\d+) \- (?P<def>\d+) \- (?P<sta>\d+)", str(msg))
-	if match:
-		d=match.groupdict()
-
-	return d
-def get_name(msg):
-	d=collections.defaultdict(str)
-	first_line = str(msg).lstrip().split("\n")[0]
-	match = re.match(r".*?\*\*(?P<name>\w+)\*\*", first_line)
-	if match:
-		d=match.groupdict()
-
-	return d['name']
-
-def get_nycpokemap_url(msg):
-	match = re.match(r'.*(?P<link>https\://nycpokemap\.com.*?)\s?',msg.content.replace("\n"," "))
-	if match and "link" in match.groupdict().keys():
-		return match['link']
-	return ""
-
-def get_googlmap_url(msg):
-	match = re.match(r'.*(?P<link>https\://maps\.google\.com.*?)\s?',msg.content.replace("\n"," "))
-	if match and "link" in match.groupdict().keys():
-		return match['link']
-	return ""
-
-def get_color_from_stats(a,d,s):
-	color = 0x000000
-	color = (((int(a)<<4 | int(d)) << 4) | int(s)) << 8
-	return color
-
-def color_from_message(msg):
-	d=get_atk_def_sta(msg)
-	return get_color_from_stats(d['atk'], d['def'], d['sta'])
 
 @client.event
 async def on_message(message):
@@ -212,16 +116,22 @@ async def on_message(message):
 
 	if len(nycpokemap_link) > 0 :
 		embed.url=nycpokemap_link
-	if name != "Egg":
-		embed.set_thumbnail(url="https://rankedboost.com/wp-content/plugins/ice/pokemon/{}-Pokemon-Go.png".format(name))
-	else:
+
+
+	url_str=""
+	if name == 'Egg':
 		if "4" in message.content.split("\n")[0]:
-			embed.set_thumbnail(url="https://pro-rankedboost.netdna-ssl.com/wp-content/uploads/2017/06/Pokemon-GO-Rare-Egg-Yellow.png")
+			url_str="https://pro-rankedboost.netdna-ssl.com/wp-content/uploads/2017/06/Pokemon-GO-Rare-Egg-Yellow.png"
 		else:
-			embed.set_thumbnail(url="https://pro-rankedboost.netdna-ssl.com/wp-content/uploads/2017/06/Pokemon-GO-Legendary-Egg-120x120.png")
+			url_str="https://pro-rankedboost.netdna-ssl.com/wp-content/uploads/2017/06/Pokemon-GO-Legendary-Egg-120x120.png"
+	elif name :
+		url_str='https://rankedboost.com/wp-content/plugins/ice/pokemon/'+name+'-Pokemon-Go.png'
+
+	if url_str != "":
+		embed.set_thumbnail(url=url_str)
+
+
 	color=0x00000
-
-
 	if int(m['iv']) == 100:
 		color|=0xD1C10F
 	if int(m['level']) >= 30:
