@@ -22,7 +22,7 @@ logger = logging.getLogger("discord")
 logger.setLevel(logging.WARNING)
 stdout_handler = logging.StreamHandler(sys.stdout)
 stdout_handler.setLevel(logging.WARNING)
-    
+
 client = discord.Client()
 slack_client = SlackClient(os.environ.get('SLACK_BOT_TOKEN'))
 groupme_client = Client.from_token(os.environ.get('GROUPME_TOKEN'))
@@ -62,7 +62,7 @@ def send_groupme(msg,lat=None,lon=None):
 	content = re.sub(r'Map: ','',content)
 	content = re.sub(r'\n+','\n',content)
 	content = re.sub(r'\[.*?\]\s?','',content)
-	
+
 	attachments=None
 	if location != None:
 		attachments=[location]
@@ -71,15 +71,15 @@ def send_groupme(msg,lat=None,lon=None):
 def send_slack(msg,lat=None,lon=None):
 	slack_client.api_call("chat.postMessage",channel="general",text=re.sub(r'\*\*','`',msg))
 
-		
+
 
 @client.event
 async def on_ready():
 	print('Logged in as '+colored(client.user.name,attrs=['bold'])+' (ID:'+str(client.user.id)+')')
 	print('Connected to '+colored(str(len(set(client.get_all_channels()))),attrs=['bold'])+' channels from guilds:'+', '.join([colored("{name} ({id})".format(name=s.name,id=str(s.id)),attrs=['bold']) for s in client.guilds]))
-	
 
-	
+
+
 def get_lat_lon_from_message(message):
 	lat_lon = re.findall(r'\*\*Google Map\*\*: \<https\://maps\.google\.com/maps\?q\=(?P<lat>.*),(?P<lon>.*)\>',message.content)
 	lat=float(0)
@@ -87,7 +87,7 @@ def get_lat_lon_from_message(message):
 	if lat_lon :
 		lat = float(lat_lon[0][0])
 		lon = float(lat_lon[0][1])
-		
+
 	return lat,lon
 
 def get_boro_from(lat,lon):
@@ -113,15 +113,28 @@ def get_atk_def_sta(msg):
 	match = re.match(r".*?IV\*\*\: (?P<atk>\d+) \- (?P<def>\d+) \- (?P<sta>\d+)", str(msg))
 	if match:
 		d=match.groupdict()
-		
+
 	return d
 def get_name(msg):
 	d=collections.defaultdict(str)
-	match = re.match(r".*?\*\*(?P<name>\w+)\*\* \(", str(msg))
+    first_line = str(msg).lstrip().split("\n")[0]
+	match = re.match(r".*?\*\*(?P<name>\w+)\*\*", first_line)
 	if match:
 		d=match.groupdict()
-		
+
 	return d['name']
+
+def get_nycpokemap_url(msg):
+    match = re.match(r'.*(?P<link>https\://nycpokemap\.com.*?) ',msg.content.replace("\n"," "))
+    if match and link in match.groupdict().keys():
+        return = match['link']
+    return ""
+
+def get_googlmap_url(msg):
+    match = re.match(r'.*(?P<link>https\://maps\.google\.com.*? ',msg.content.replace("\n"," "))
+    if match and link in match.groupdict().keys():
+        return = match['link']
+    return ""
 
 def get_color_from_stats(a,d,s):
 	color = 0x000000
@@ -136,7 +149,7 @@ def color_from_message(msg):
 async def on_message(message):
 	if message.guild == None:
 		return
-	
+
 	if message.guild.name != "NYCPokeMap":
 		return
 
@@ -149,18 +162,18 @@ async def on_message(message):
 	if message.channel.name in ["cp2500","iv90","iv100"]:
 		if get_name(message.clean_content).lower() in [channel.name for channel in message.guild.channels]:
 			return
-	
+
 	boro=str(None)
 	lat,lon=get_lat_lon_from_message(message)
-	
+
 
 	if lat != None and lon != None:
 		boro = str(get_boro_from(lat=lat,lon=lon))
 
 	neighborhood=None
-	
+
 	neighborhood=get_neighborhood_from(lat,lon)
-		
+
 	m=collections.defaultdict(int)
 	matches = message_pattern.match(message.content.replace("\n"," "))
 	if matches:
@@ -181,19 +194,11 @@ async def on_message(message):
 	elif m and m['gender']=='Male':
 		gender = "♂"
 
-	# match = nycpokemap_pattern.findall(message.content.replace("\n",""))
-	match = re.findall(r'\<https\://nycpokemap\.com.*?\>',message.content.replace("\n"," "))
-	map_link = str(match)
-	nycpokemap_link = ""
-	if match!=None:
-		map_link = re.sub(r'[\<|\>]','',match[0])
-		nycpokemap_link=map_link
+    map_link = get_nycpokemap_url(message)
+	nycpokemap_link = map_link
 
-	match = re.findall(r'\<https\://maps\.google\.com.*?\>',message.content.replace("\n"," "))
-	gmap_link = str(match)
-	if match!=None:
-		gmap_link = re.sub(r'[\<|\>]','',match[0])
-		
+	gmap_link = get_googlmap_url(message)
+
 
 	txt = ""
 	if m :
@@ -201,15 +206,15 @@ async def on_message(message):
 	# else :
 	txt = message.channel.name,"["+str(boro) + "/" +str(neighborhood) + "] - {}{}".format(txt, map_link)
 	ctxt = colored(txt,"white")
-	
+
 	embed = discord.Embed(title=m['name'], description=content, color=0x000000)
-	
+
 	if len(nycpokemap_link) > 0 :
 		embed.url=nycpokemap_link
 	if m['name']:
 		embed.set_thumbnail(url="https://rankedboost.com/wp-content/plugins/ice/pokemon/{}-Pokemon-Go.png".format(m['name']))
 	color=0x00000
-	
+
 	if int(m['iv']) == 100:
 		color|=0xD1C10F
 	if int(m['level']) >= 30:
@@ -219,7 +224,7 @@ async def on_message(message):
 
 	embed.color=color # color_from_message(message)
 
-	
+
 	if  str(neighborhood) in ["washington-heights","fort-george"]:
 		c=None
 		if str(message.channel.name).startswith('raid'):
@@ -230,7 +235,7 @@ async def on_message(message):
 			else:
 				cprint("Error for channel {}".format("raids"),"red")
 		else:
-			
+
 			c = discord.utils.get(client.get_all_channels(), guild__name='PoGoWHeights', name=str(neighborhood))
 			if c != None :
 				ctxt = colored(txt,"blue")
@@ -258,7 +263,7 @@ async def on_message(message):
 					await c.send(embed=embed)
 				else:
 					cprint("Error for channel {}".format(channel_name),"red")
-			
+
 			if int(m['level']) in range (20,29) :
 				channel_name = 'min-level-20'
 				c = discord.utils.get(client.get_all_channels(), guild__name='PoGoWHeights', name=channel_name)
@@ -274,11 +279,11 @@ async def on_message(message):
 				else:
 					cprint("Error for channel {}".format(channel_name),"red")
 
-	
+
 	c=None
 	if str(message.channel.name).startswith('raid'):
 		return
-	else:
+	elif boro.lower() in ["manhattan"]:
 		c_name="manhattan"
 		content="**{}**\n{}".format(neighborhood,content)
 		embed.add_field(name="Area", value=str(neighborhood), inline=False)
