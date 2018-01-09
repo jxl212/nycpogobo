@@ -8,11 +8,11 @@ from discord.ext import commands
 import platform
 import re
 import collections
-from pymongo import MongoClient
+
 from termcolor import cprint, colored
 
 from utils import *
-	
+
 logger = logging.getLogger("discord")
 logger.setLevel(logging.WARNING)
 stdout_handler = logging.StreamHandler(sys.stdout)
@@ -20,16 +20,8 @@ stdout_handler.setLevel(logging.WARNING)
 
 client = discord.Client()
 
-mongodb_user=os.environ.get("MONGO_USER")
-mongodb_pass=os.environ.get("MONGO_PASS")
 
-mongo_client = MongoClient("mongodb+srv://{}:{}@cluster0-m6kv9.mongodb.net/nyc".format(mongodb_user,mongodb_pass))
-client = discord.Client()
-print("mongodb guild version: "+colored(mongo_client.server_info()['version'],attrs=['bold']))
 
-db = mongo_client.nyc
-if db is None:
-	exit()
 
 
 chat_channels = collections.defaultdict(int)
