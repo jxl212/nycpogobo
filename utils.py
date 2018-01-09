@@ -1,4 +1,4 @@
-import os
+import os, re
 import groupy
 from groupy import Client
 from slackclient import SlackClient
