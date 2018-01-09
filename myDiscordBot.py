@@ -53,7 +53,7 @@ async def on_message(message):
 		return
 
 	if message.channel.name in ["cp2500","iv90","iv100"]:
-		if get_name(message.clean_content).lower() in [channel.name for channel in message.guild.channels]:
+		if get_name(message).lower() in [channel.name for channel in message.guild.channels]:
 			return
 
 	boro=str(None)
@@ -90,8 +90,8 @@ async def on_message(message):
 	name=get_name(message)
 	map_link = get_nycpokemap_url(message)
 	nycpokemap_link = map_link
-
 	gmap_link = get_googlmap_url(message)
+	print(name, nycpokemap_link,gmap_link)
 
 
 	txt = ""

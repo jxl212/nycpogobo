@@ -81,12 +81,11 @@ def get_atk_def_sta(msg):
 	return d
 def get_name(msg):
 	d=collections.defaultdict(str)
-	first_line = str(msg.content).lstrip().split("\n")[0]
-	match = re.match(r".*?\*\*(?P<name>\w+)\*\*", first_line)
-	if match:
-		d=match.groupdict()
-
-	return d['name']
+	first_line = msg.content.split("\n")[0].lstrip()
+	match = re.match(r".*?\*\*(?P<name>\w+)\*\*.*?", first_line)
+	if match and "name" in match.groupdict().keys():
+		return match["name"]
+	return
 
 def get_nycpokemap_url(msg):
 	match = re.match(r'.*(?P<link>https\://nycpokemap\.com.*?)\s?',msg.content.replace("\n"," "))
