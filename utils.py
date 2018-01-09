@@ -3,7 +3,17 @@ import groupy
 from groupy import Client
 from slackclient import SlackClient
 from pymongo import MongoClient
+<<<<<<< HEAD
 import collections
+=======
+mongodb_user=os.environ.get("MONGO_USER")
+mongodb_pass=os.environ.get("MONGO_PASS")
+
+mongo_client = MongoClient("mongodb+srv://{}:{}@cluster0-m6kv9.mongodb.net/nyc".format(mongodb_user,mongodb_pass))
+db = mongo_client.nyc
+if db is None:
+	exit()
+>>>>>>> 98f7dcdb3428bd870527c857e1e8aa73c4bebc09
 
 mongodb_user=os.environ.get("MONGO_USER")
 mongodb_pass=os.environ.get("MONGO_PASS")
