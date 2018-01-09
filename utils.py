@@ -88,13 +88,13 @@ def get_name(msg):
 	return
 
 def get_nycpokemap_url(msg):
-	match = re.match(r'.*(?P<link>https\://nycpokemap\.com.*?)\s?',msg.content.replace("\n"," "))
+	match = re.match(r'.*(?P<link>https\://nycpokemap\.com.*)\s?',msg.content.replace("\n"," "))
 	if match and "link" in match.groupdict().keys():
 		return match['link']
 	return ""
 
 def get_googlmap_url(msg):
-	match = re.match(r'.*(?P<link>https\://maps\.google\.com.*?)\s?',msg.content.replace("\n"," "))
+	match = re.match(r'.*(?P<link>https\://maps\.google\.com.*)\s?',msg.content.replace("\n"," "))
 	if match and "link" in match.groupdict().keys():
 		return match['link']
 	return ""

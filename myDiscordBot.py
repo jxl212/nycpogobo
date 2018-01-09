@@ -109,11 +109,11 @@ async def on_message(message):
 
 	url_str=""
 	if name == 'Egg':
-		if "4" in message.content.split("\n")[0]:
+		if "Level: 4" in message.content.split("\n")[0]:
 			url_str="https://pro-rankedboost.netdna-ssl.com/wp-content/uploads/2017/06/Pokemon-GO-Rare-Egg-Yellow.png"
-		else:
+		elif "Level: 5" in message.content.split("\n")[0]:
 			url_str="https://pro-rankedboost.netdna-ssl.com/wp-content/uploads/2017/06/Pokemon-GO-Legendary-Egg-120x120.png"
-	elif name :
+	elif name:
 		url_str='https://rankedboost.com/wp-content/plugins/ice/pokemon/'+name+'-Pokemon-Go.png'
 
 	if url_str != "":
