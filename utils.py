@@ -14,7 +14,7 @@ mongo_client = MongoClient("mongodb+srv://{}:{}@cluster0-m6kv9.mongodb.net/nyc".
 db = mongo_client.nyc
 if db is None:
 	exit()
-print("mongodb guild version: "+colored(mongo_client.server_info()['version'],attrs=['bold']))
+print("mongodb server version: "+colored(mongo_client.server_info()['version'],attrs=['bold']))
 groupme_client = Client.from_token(os.environ.get('GROUPME_TOKEN'))
 groupme_bot=[b for b in groupme_client.bots.list() if b.data['bot_id']=='074f9a78a1efbcf9f0d44e60a5'][0]
 
@@ -111,7 +111,7 @@ def color_from_message(msg):
 
 def get_raid_level(msg):
 	key="level"
-	match = re.match(r'.*Level: <(?P<'+key+'>\d)',msg.content.replace("\n"," "))
+	match = re.match(r'.*Level: <(?P<'+key+'>\d) ',msg.content.replace("\n"," "))
 	if match and key in match.groupdict().keys():
 		return match[key]
 	return ""
