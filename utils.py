@@ -111,8 +111,7 @@ def color_from_message(msg):
 
 def get_raid_level(msg):
 	key="level"
-	first_line = msg.content.split("\n")[0].lstrip().rstrip()
-	match = re.match(r'.*Level\: <(?P<'+key+'>\d+).*?',first_line)
+	match = re.match(r'.*Level\: (?P<'+key+'>\d+)',msg.content.replace("\n"," "))
 	if match and key in match.groupdict().keys():
 		return match[key]
 	return ""
