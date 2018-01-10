@@ -82,16 +82,12 @@ async def on_message(message):
 		gender = "♂"
 
 	name=get_name(message)
-	map_link = get_nycpokemap_url(message)
-	nycpokemap_link = map_link
+	nycpokemap_link = get_nycpokemap_url(message)
 	gmap_link = get_googlmap_url(message)
 
 
 
-	embed = discord.Embed(title=name, description=content, color=0x000000)
-
-	if len(nycpokemap_link) > 0 :
-		embed.url=nycpokemap_link
+	embed = discord.Embed(title=name, description=content, url=nycpokemap_link, color=0x000000)
 
 
 	url_str=""
