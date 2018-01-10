@@ -1,16 +1,10 @@
-import os, sys
+import os, sys, re, collections, datetime
 import discord
 import logging
-import datetime
 import asyncio
 from discord.ext.commands import Bot
 from discord.ext import commands
-import platform
-import re
-import collections
-
 from termcolor import cprint, colored
-
 from utils import *
 
 logger = logging.getLogger("discord")
@@ -20,17 +14,17 @@ stdout_handler.setLevel(logging.WARNING)
 
 client = discord.Client()
 
-
-
-
-
-chat_channels = collections.defaultdict(int)
 message_pattern = re.compile(r'.*?\*\*(?P<name>\w+)\*\*\s\((?P<iv>\d+)\%\)\s\-\s\(CP\:\s(?P<cp>\d+)\)\s-\s\(Level\:\s(?P<level>\d+)\).*\*\*Until\*\*\: (?P<time>\d\d\:\d\d\:\d\d)(?P<AMPM>\w\w).*IV\*\*\: (?P<atk>\d+) \- (?P<def>\d+) \- (?P<sta>\d+).*\*\*Gender\*\*: (?P<gender>\w+)?')
 google_map_pattern = re.compile(r'\*\*Google Map\*\*: \<https\://maps\.google\.com/maps\?q\=(?P<lat_lon>.*)\>')
 nycpokemap_pattern = re.compile(r'\*\*Map\*\*: \<https\://nycpokemap\.com\#.*\>')
 
 
-
+async def send_discord_channel_embeded_message(guild_name, channel_name, embeded_text):
+	c = discord.utils.get(client.get_all_channels(), guild__name=guild_name, name=str(channel_name))
+	if c != None :
+		await c.send(embed=embeded_text)
+	else:
+		cprint("Error for guild: {} for channel: {}".format(guild_name,str(channel_name)),"red")
 
 
 @client.event
@@ -91,15 +85,8 @@ async def on_message(message):
 	map_link = get_nycpokemap_url(message)
 	nycpokemap_link = map_link
 	gmap_link = get_googlmap_url(message)
-	print(name, nycpokemap_link,gmap_link)
 
 
-	txt = ""
-	if m :
-		txt = "{}".format(gender + " " + m['name']+ " " +  "({}%)".format(m['iv'])+ " " +  m['level']+ " " +  m['time'] + m['AMPM'] +" ")
-	# else :
-	txt = message.channel.name,"["+str(boro) + "/" +str(neighborhood) + "] - {}{}".format(txt, map_link)
-	ctxt = colored(txt,"white")
 
 	embed = discord.Embed(title=name, description=content, color=0x000000)
 
@@ -108,6 +95,7 @@ async def on_message(message):
 
 
 	url_str=""
+	level=""
 	if name == 'Egg':
 		level = get_raid_level(message)
 		if level == 4:
@@ -120,7 +108,7 @@ async def on_message(message):
 	if url_str != "":
 		embed.set_thumbnail(url=url_str)
 
-
+	print(name, level, nycpokemap_link,gmap_link)
 	color=0x00000
 	if int(m['iv']) == 100:
 		color|=0xD1C10F
@@ -132,74 +120,38 @@ async def on_message(message):
 	embed.color=color # color_from_message(message)
 
 
-	if  str(neighborhood) in ["washington-heights","fort-george"]:
-		c=None
+	if str(neighborhood) in ["washington-heights","fort-george"]:
 		if str(message.channel.name).startswith('raid'):
-			c = discord.utils.get(client.get_all_channels(), guild__name='PoGoWHeights', name=str("raids"))
-			if c != None :
-				ctxt = colored(txt,"white")
-				await c.send(embed=embed)
-			else:
-				cprint("Error for channel {}".format("raids"),"red")
+			channel_name="raids"
+			await send_discord_channel_embeded_message('PoGoWHeights', channel_name, embed)
 		else:
-
-			c = discord.utils.get(client.get_all_channels(), guild__name='PoGoWHeights', name=str(neighborhood))
-			if c != None :
-				ctxt = colored(txt,"blue")
-				await c.send(embed=embed)
-			else:
-				cprint("Error for channel {}".format(neighborhood),"red")
+			channel_name=str(neighborhood)
+			await send_discord_channel_embeded_message('PoGoWHeights', channel_name, embed)
 
 			if int(m['iv'])>=90 and int(m['level'])>=25:
 				send_groupme(message.clean_content,lat,lon)
 
-
 			if int(m['iv']) in range(90,99) and message.channel.name == "iv90":
-				c=None
 				channel_name="iv90"
-				c = discord.utils.get(client.get_all_channels(), guild__name='PoGoWHeights', name=channel_name)
-				if c != None:
-					await c.send(embed=embed)
-				else:
-					cprint("Error for channel {}".format(channel_name),"red")
+				await send_discord_channel_embeded_message('PoGoWHeights', channel_name, embed)
 			if int(m['iv'])==100 and message.channel.name == "iv100":
 				c=None
 				channel_name="iv100"
-				c = discord.utils.get(client.get_all_channels(), guild__name='PoGoWHeights', name=channel_name)
-				if c != None:
-					await c.send(embed=embed)
-				else:
-					cprint("Error for channel {}".format(channel_name),"red")
-
+				await send_discord_channel_embeded_message('PoGoWHeights', channel_name, embed)
 			if int(m['level']) in range (20,29) :
 				channel_name = 'min-level-20'
-				c = discord.utils.get(client.get_all_channels(), guild__name='PoGoWHeights', name=channel_name)
-				if c != None:
-					await c.send(embed=embed)
-				else:
-					cprint("Error for channel {}".format(channel_name),"red")
+				await send_discord_channel_embeded_message('PoGoWHeights', channel_name, embed)
 			if int(m['level'])>=30 :
 				channel_name = 'min-level-30'
-				c = discord.utils.get(client.get_all_channels(), guild__name='PoGoWHeights', name=channel_name)
-				if c != None:
-					await c.send(embed=embed)
-				else:
-					cprint("Error for channel {}".format(channel_name),"red")
+				await send_discord_channel_embeded_message('PoGoWHeights', channel_name, embed)
 
-
-	c=None
 	if str(message.channel.name).startswith('raid'):
 		return
 	elif boro.lower() in ["manhattan"]:
-		c_name="manhattan"
+		channel_name="manhattan"
 		content="**{}**\n{}".format(neighborhood,content)
 		embed.add_field(name="Area", value=str(neighborhood), inline=False)
-		c = discord.utils.get(client.get_all_channels(), guild__name='PoGoWHeights', name=c_name)
-		if c != None :
-			await c.send(embed=embed)
-
-		else:
-			cprint("Error for channel {}".format(c_name),"red")
+		await send_discord_channel_embeded_message('PoGoWHeights', channel_name, embed)
 
 
 client.run(os.environ.get('TOKEN'), bot=False)
