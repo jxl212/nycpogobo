@@ -98,9 +98,9 @@ async def on_message(message):
 	level=""
 	if name == 'Egg':
 		level = get_raid_level(message)
-		if level == 4:
+		if level == "4":
 			url_str="https://pro-rankedboost.netdna-ssl.com/wp-content/uploads/2017/06/Pokemon-GO-Rare-Egg-Yellow.png"
-		elif level == 5:
+		elif level == "5":
 			url_str="https://pro-rankedboost.netdna-ssl.com/wp-content/uploads/2017/06/Pokemon-GO-Legendary-Egg-120x120.png"
 		else:
 			first_line = message.content.split("\n")[0].lstrip().rstrip()
