@@ -103,7 +103,8 @@ async def on_message(message):
 		elif level == 5:
 			url_str="https://pro-rankedboost.netdna-ssl.com/wp-content/uploads/2017/06/Pokemon-GO-Legendary-Egg-120x120.png"
 		else:
-			print(message.content)
+			first_line = message.content.split("\n")[0].lstrip().rstrip()
+			cprint(first_line,"red")
 	elif name:
 		url_str='https://rankedboost.com/wp-content/plugins/ice/pokemon/'+name+'-Pokemon-Go.png'
 
