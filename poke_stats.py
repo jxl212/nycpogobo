@@ -15,7 +15,13 @@ class PokeStats:
 
     def spawn_per_hour(self,pokemon_name):
         size=self.pokemons[pokemon_name].qsize()
-        return int(size)
+        first=self.pokemons[pokemon_name].queue[0]
+        last=self.pokemons[pokemon_name].queue[-1]
+        delta=last-first
+        per_second=int(size) / delta.total_seconds()
+        per_minute=int(size) / delta.total_seconds() / 60
+        per_hour=int(size) / delta.total_seconds() / 3660
+        return per_hour, per_minute, per_second
 
     def remove_old_entries(self,pokemon_name,max_sec=int(60*60)):
         cur_time=datetime.now()
