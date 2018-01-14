@@ -42,7 +42,7 @@ def send_groupme(msg,lat=None,lon=None):
 	groupme_bot.post(text=content,attachments=attachments)
 
 def process_message_for_groupme(msg,iv,level=None):
-	print("process_message_for_groupme({},{},{})".format(msg.content,iv,level))
+	print("process_message_for_groupme({},{},{})".format(get_first_line(msg),iv,level))
 	if iv == None:
 		iv = -1
 	iv = int(iv)
@@ -51,9 +51,9 @@ def process_message_for_groupme(msg,iv,level=None):
 		level=0
 	level=int(level)
 
-	min_level=20
+	min_level=0
 	if is_weather_boosted(msg):
-		min_level+=5
+		min_level+=25
 
 	if (iv in [0,100]) or (iv >= 93 and level >= min_level):
 		print("	⬆︎	Sent to groupme!")
@@ -101,6 +101,9 @@ def get_attack(msg):
 	if "atk" in d:
 		return int(d['atk'])
 	return None
+
+def get_first_line(msg):
+	return msg.content.split("\n")[0].lstrip()
 
 def get_name(msg):
 	d=collections.defaultdict(str)
