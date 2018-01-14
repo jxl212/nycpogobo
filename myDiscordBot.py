@@ -143,8 +143,8 @@ async def on_message(message):
 		channel_name=neighborhood
 		await send_discord_channel_embeded_message('PoGoWHeights', channel_name, embed)
 
-		process_message_for_groupme(msg,m['iv'],level)
-		await process_message_for_discord(msg,m['iv'],level)
+		process_message_for_groupme(message,m['iv'],level)
+		await process_message_for_discord(message,m['iv'],level)
 
 	if boro.lower() in ["manhattan"] and (is_raid == False):
 		channel_name="manhattan"
