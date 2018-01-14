@@ -83,6 +83,10 @@ async def on_message(message):
 	if matches:
 		m=matches
 
+	if m and int(m['iv']) == 100:
+		if message.channel.name != "iv100":
+			return
+
 	content = message.clean_content
 	content = content.split("\n")[:-3]
 	content = "\n".join(content)
