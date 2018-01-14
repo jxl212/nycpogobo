@@ -53,6 +53,11 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
+	if message.clean_content == "!reload":
+		print("!reloading...")
+		load_config_from_db()
+		return
+
 	if message.guild == None:
 		return
 

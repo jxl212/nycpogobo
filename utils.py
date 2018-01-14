@@ -5,6 +5,7 @@ from slackclient import SlackClient
 from pymongo import MongoClient
 import collections
 from termcolor import cprint, colored
+from config import *
 
 
 mongodb_user=os.environ.get("MONGO_USER")
@@ -51,11 +52,11 @@ def process_message_for_groupme(msg,lat,lng,iv,level=None):
 		level=0
 	level=int(level)
 
-	min_level=20
-	min_iv=93
+	min_level=int(config['min_level'])
+	min_iv=int(config['min_iv'])
 	if is_weather_boosted(msg):
-		min_level+=5
-		min_iv+=3
+		min_level+=int(config['weather_level_mod'])
+		min_iv+=int(config['weather_iv_mod'])
 
 	if (iv in [0,100]) or (iv >= min_iv and level >= min_level):
 		print("	⬆︎	Sent to groupme!")
@@ -169,3 +170,7 @@ def is_weather_boosted(msg):
 	wb=get_weather_boosted(msg)
 	is_boosted = wb not in [None, "None", ""]
 	return is_boosted
+
+
+def load_config_from_db():
+	config = load_config()
