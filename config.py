@@ -3,6 +3,7 @@ import os, re
 from pymongo import MongoClient
 
 def load_config():
+    global Config
     parser=ConfigParser()
     mongodb_user=os.environ.get("MONGO_USER")
     mongodb_pass=os.environ.get("MONGO_PASS")
@@ -12,7 +13,7 @@ def load_config():
 
     ret=db.config.find_one({ "_id": {"$exists":True} },{"_id":False})
     parser.read_dict({"DEFAULT":ret})
-    config = list(parser['DEFAULT'].items())
-    return config
+    Config = list(parser['DEFAULT'].items())
+    return Config
 
 Config = load_config()
