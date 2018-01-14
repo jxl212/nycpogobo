@@ -125,7 +125,6 @@ async def on_message(message):
 	if url_str != "":
 		embed.set_thumbnail(url=url_str)
 
-	print(name, "{}%".format(int(m['iv'])), level, nycpokemap_link)
 	color=0x00000
 	if int(m['iv']) == 100:
 		color|=0xD1C10F
@@ -137,6 +136,7 @@ async def on_message(message):
 	embed.color=color # color_from_message(message)
 
 	is_raid=str(message.channel.name).startswith('raid')
+	print(name, "{}%".format(int(m['iv'])), level, neighborhood, is_raid, nycpokemap_link)
 	if neighborhood in ["washington-heights","fort-george"]:
 		if is_raid:
 			channel_name="raids"
