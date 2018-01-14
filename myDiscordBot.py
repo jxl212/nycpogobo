@@ -141,17 +141,17 @@ async def on_message(message):
 	embed.color=color # color_from_message(message)
 
 	is_raid=str(message.channel.name).startswith('raid')
-	if not is_raid:
-		pokestats.update(name)
-
-	txt=", ".join((name, "{}%".format(int(m['iv'])), str(level), "(f:{})".format(pokestats.spawn_per_hour(name)), boro, neighborhood, str(is_raid), str(get_weather_boosted(message)), nycpokemap_link))
 
 
-	cprint(txt, "blue" if is_weather_boosted(message) else None)
+
 	if neighborhood in ["washington-heights","fort-george"]:
 		if is_raid:
 			channel_name="raids"
 			return await send_discord_channel_embeded_message('PoGoWHeights', channel_name, embed)
+
+		pokestats.update(name)
+		txt=", ".join((name, "{}%".format(int(m['iv'])), str(level), "(f:{})".format(pokestats.spawn_per_hour(name)), boro, neighborhood, str(is_raid), str(get_weather_boosted(message)), nycpokemap_link))
+		cprint(txt, "blue" if is_weather_boosted(message) else None)
 
 		channel_name=neighborhood
 		await send_discord_channel_embeded_message('PoGoWHeights', channel_name, embed)
