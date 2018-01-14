@@ -48,7 +48,7 @@ async def process_message_for_discord(msg,iv,level):
 @client.event
 async def on_ready():
 	print('Logged in as '+colored(client.user.name,attrs=['bold'])+' (ID:'+str(client.user.id)+')')
-	print('Connected to '+colored(str(len(set(client.get_all_channels()))),attrs=['bold'])+' channels from guilds:'+', '.join([colored("{name} ({id})".format(name=s.name,id=str(s.id)),attrs=['bold']) for s in client.guilds]))
+	print('Connected to '+colored(str(len(set(client.get_all_channels()))),attrs=['bold'])+' channels from guilds:'+', '.join([colored("{name}".format(name=s.name,id=str(s.id)),attrs=['bold']) for s in client.guilds]))
 
 @client.event
 async def on_message(message):
