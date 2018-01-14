@@ -21,19 +21,42 @@ message_pattern = re.compile(r'.*?\*\*(?P<name>\w+)\*\*\s\((?P<iv>\d+)\%\)\s\-\s
 google_map_pattern = re.compile(r'\*\*Google Map\*\*: \<https\://maps\.google\.com/maps\?q\=(?P<lat_lon>.*)\>')
 nycpokemap_pattern = re.compile(r'\*\*Map\*\*: \<https\://nycpokemap\.com\#.*\>')
 
+async def reload_config(msg):
+	load_config_from_db(msg)
+	print(Config)
 
 async def send_config_to_sender(msg):
 	txt=str(Config)
-	print(Config,type(Config))
+	print(Config)
 	await msg.channel.send(txt)
 
+async def get_min_iv(msg):
+	txt="Min IV: " + str(Config['min_iv'])
+	await msg.channel.send(txt)
 
-async def reload_config(msg):
-	load_config_from_db(msg)
+async def get_min_level(msg):
+	txt="Min Level: " + str(Config['min_level'])
+	await msg.channel.send(txt)
+
+async def set_min_iv(msg):
+	new_value=message.clean_content.split(" ")[1]
+	print("set_min_iv", new_value)
+	Config['min_iv']=int(new_value)
+	update_db()
+
+async def set_min_level(msg):
+	new_value=message.clean_content.split(" ")[1]
+	print("set_min_level", new_value)
+	Config['min_level']=int(new_value)
+	update_db()
 
 commands={
     "!reload":reload_config,
-    "!info":send_config_to_sender
+    "!info":send_config_to_sender,
+	"!get min_iv":get_min_iv,
+	"!set min_iv":set_min_iv,
+	"!get min_level":get_min_level,
+	"!set min_level":set_min_level
 }
 
 async def send_discord_channel_embeded_message(guild_name, channel_name, embeded_text):
@@ -70,8 +93,9 @@ async def on_ready():
 @client.event
 async def on_message(message):
 	if message.clean_content in commands.keys():
-		print(message.clean_content)
-		await commands[message.clean_content](message)
+		cmd=message.clean_content.split(" ")[0]
+		print(cmd)
+		await commands[cmd](message)
 		return
 
 	if message.guild == None:
