@@ -19,7 +19,7 @@ class PokeStats:
 
     def remove_old_entries(self,pokemon_name,max_sec=int(60*60)):
         cur_time=datetime.now()
-        for p in pokemons[pokemon_name]:
+        for p in self.pokemons[pokemon_name]:
             t_sec=(cur_time - p.queue[0])
             if t_sec.total_seconds() < max_sec:
                 return
