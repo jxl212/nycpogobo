@@ -59,7 +59,7 @@ def process_message_for_groupme(msg,iv,level=None):
 
 	if (iv in [0,100]) or (iv >= min_iv and level >= min_level):
 		print("	⬆︎	Sent to groupme!")
-		send_groupme(message.clean_content,lat,lon)
+		send_groupme(msg.clean_content,lat,lon)
 
 def send_slack(msg,lat=None,lon=None):
 	slack_client.api_call("chat.postMessage",channel="general",text=re.sub(r'\*\*','`',msg))
