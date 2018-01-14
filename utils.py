@@ -175,4 +175,4 @@ def is_weather_boosted(msg):
 
 
 def load_config_from_db(msg):
-	load_config()
+	Config = load_config()
