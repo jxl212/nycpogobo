@@ -26,7 +26,7 @@ async def send_discord_channel_embeded_message(guild_name, channel_name, embeded
 	else:
 		cprint("Error for guild: {} for channel: {}".format(guild_name,str(channel_name)),"red")
 
-async def process_message_for_discord(msg,iv,level):
+async def process_message_for_discord(msg,embed,iv,level):
 	iv = int(iv) if iv else None
 	level = int(level) if level else None
 	if iv and iv >= 90 and iv < 100 and msg.channel.name == "iv90":
@@ -146,7 +146,7 @@ async def on_message(message):
 		await send_discord_channel_embeded_message('PoGoWHeights', channel_name, embed)
 
 		process_message_for_groupme(message,m['iv'],level)
-		await process_message_for_discord(message,m['iv'],level)
+		await process_message_for_discord(message,embed,m['iv'],level)
 
 	if boro.lower() in ["manhattan"] and (is_raid == False):
 		channel_name="manhattan"
