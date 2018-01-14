@@ -41,7 +41,7 @@ def send_groupme(msg,lat=None,lon=None):
 		attachments=[location]
 	groupme_bot.post(text=content,attachments=attachments)
 
-def process_message_for_groupme(msg,iv,level=None):
+def process_message_for_groupme(msg,lat,lng,iv,level=None):
 	print("process_message_for_groupme({},{},{})".format(get_first_line(msg),iv,level))
 	if iv == None:
 		iv = -1
@@ -59,7 +59,7 @@ def process_message_for_groupme(msg,iv,level=None):
 
 	if (iv in [0,100]) or (iv >= min_iv and level >= min_level):
 		print("	⬆︎	Sent to groupme!")
-		send_groupme(msg.clean_content,lat,lon)
+		send_groupme(msg.clean_content,lat,lng)
 
 def send_slack(msg,lat=None,lon=None):
 	slack_client.api_call("chat.postMessage",channel="general",text=re.sub(r'\*\*','`',msg))
