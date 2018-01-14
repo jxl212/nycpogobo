@@ -18,8 +18,11 @@ class PokeStats:
         first=self.pokemons[pokemon_name].queue[0]
         last=self.pokemons[pokemon_name].queue[-1]
         delta=last-first
+<<<<<<< HEAD
         if delta.total_seconds() == 0:
             return None, None, None
+=======
+>>>>>>> b9750c6b04b6a8fdef6548fbc6eb098675e0dfee
         per_second=int(size) / delta.total_seconds()
         per_minute=int(size) / delta.total_seconds() / 60
         per_hour=int(size) / delta.total_seconds() / 3660
