@@ -6,6 +6,7 @@ from discord.ext.commands import Bot
 from discord.ext import commands
 from termcolor import cprint, colored
 from utils import *
+from poke_stats import *
 
 logger = logging.getLogger("discord")
 logger.setLevel(logging.WARNING)
@@ -136,7 +137,12 @@ async def on_message(message):
 	embed.color=color # color_from_message(message)
 
 	is_raid=str(message.channel.name).startswith('raid')
-	txt=", ".join((name, "{}%".format(int(m['iv'])), str(level), neighborhood, str(is_raid), str(get_weather_boosted(message)), nycpokemap_link))
+	if not is_raid:
+		pokestats.update(name)
+
+	txt=", ".join((name, "{}%".format(int(m['iv'])), str(level), "(f:{})".format(pokestats.spawn_per_hour()), neighborhood, str(is_raid), str(get_weather_boosted(message)), nycpokemap_link))
+
+
 	cprint(txt, "blue" if is_weather_boosted(message) else None)
 	if neighborhood in ["washington-heights","fort-george"]:
 		if is_raid:
