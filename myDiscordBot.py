@@ -140,7 +140,7 @@ async def on_message(message):
 	if not is_raid:
 		pokestats.update(name)
 
-	txt=", ".join((name, "{}%".format(int(m['iv'])), str(level), "(f:{})".format(pokestats.spawn_per_hour()), neighborhood, str(is_raid), str(get_weather_boosted(message)), nycpokemap_link))
+	txt=", ".join((name, "{}%".format(int(m['iv'])), str(level), "(f:{})".format(pokestats.spawn_per_hour(name)), neighborhood, str(is_raid), str(get_weather_boosted(message)), nycpokemap_link))
 
 
 	cprint(txt, "blue" if is_weather_boosted(message) else None)
