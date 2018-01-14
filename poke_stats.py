@@ -24,7 +24,7 @@ class PokeStats:
         per_minute=int(size) / (delta.total_seconds() / 60)
         per_hour=int(size) / (delta.total_seconds() / 3600)
         return {"per_hour":int(per_hour * 1000)/1000, "per_minute":int(per_minute * 1000)/1000, "per_second":int(per_second * 1000)/1000}
- 
+
     def remove_old_entries(self,pokemon_name,max_sec=int(60*60)):
         cur_time=datetime.now()
         for data_point in self.pokemons[pokemon_name].queue:
