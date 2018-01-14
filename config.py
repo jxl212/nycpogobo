@@ -9,7 +9,7 @@ def load_config():
 
     mongo_client = MongoClient("mongodb+srv://{}:{}@cluster0-m6kv9.mongodb.net/nyc".format(mongodb_user,mongodb_pass))
     db = mongo_client.nyc
-
+    
     ret=db.config.find_one({ "_id": {"$exists":True} },{"_id":False})
     parser.read_dict({"DEFAULT":ret})
     config = list(parser['DEFAULT'].items())
