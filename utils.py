@@ -41,6 +41,25 @@ def send_groupme(msg,lat=None,lon=None):
 		attachments=[location]
 	groupme_bot.post(text=content,attachments=attachments)
 
+def process_message_for_groupme(msg,iv,level=None):
+	print("process_message_for_groupme({},{},{})".format(msg.content,iv,level))
+	if iv == None:
+		return
+	iv = int(iv)
+
+	if level == None:
+		level=0
+	level=int(level)
+
+	min_level=20
+	if is_weather_boosted(msg):
+		min_level+=5
+
+	if iv <= 0 or iv >= 93: #(14 * 100 // 15)
+		if (iv in [0,100]) or (level >= min_level):
+			print("	⬆︎	Sent to groupme!")
+			send_groupme(message.clean_content,lat,lon)
+
 def send_slack(msg,lat=None,lon=None):
 	slack_client.api_call("chat.postMessage",channel="general",text=re.sub(r'\*\*','`',msg))
 
@@ -51,7 +70,6 @@ def get_lat_lon_from_message(message):
 	if lat_lon :
 		lat = float(lat_lon[0][0])
 		lon = float(lat_lon[0][1])
-
 	return lat,lon
 
 def get_boro_from(lat,lon):
@@ -77,8 +95,13 @@ def get_atk_def_sta(msg):
 	match = re.match(r".*?IV\*\*\: (?P<atk>\d+) \- (?P<def>\d+) \- (?P<sta>\d+)", msg.content.replace("\n"," "))
 	if match:
 		d=match.groupdict()
-
 	return d
+
+def get_attack(msg):
+	d=get_atk_def_sta(msg)
+	if "atk" in d:
+		return int(d['atk'])
+	return None
 
 def get_name(msg):
 	d=collections.defaultdict(str)
@@ -115,3 +138,24 @@ def get_raid_level(msg):
 	if match and key in match.groupdict().keys():
 		return match[key]
 	return ""
+
+def get_iv(msg):
+	key="iv"
+	match = re.match(r".*?\*\*\s\((?P<"+key+">\d+)\%\)\s", msg.content.replace("\n"," "))
+	if match and key in match.groupdict().keys():
+		return match[key]
+	return None
+
+def get_weather_boosted(msg):
+    # **Weather boosted**: None
+	key="weather"
+	match = re.match(r'.*\*\*Weather boosted\*\*\: (?P<'+key+'>\w+)\s',msg.content.replace("\n"," "))
+	if match and key in match.groupdict().keys():
+		return match[key]
+	return ""
+
+def is_weather_boosted(msg):
+    # **Weather boosted**: None
+	wb=get_weather_boosted(msg)
+	is_boosted = wb not in [None, "None", ""]
+	return is_boosted

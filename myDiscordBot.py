@@ -26,6 +26,24 @@ async def send_discord_channel_embeded_message(guild_name, channel_name, embeded
 	else:
 		cprint("Error for guild: {} for channel: {}".format(guild_name,str(channel_name)),"red")
 
+async def process_message_for_discord(msg,iv,level):
+	iv = int(iv) if iv else None
+	level = int(level) if level else None
+	if iv and iv >= 90 and iv < 100 and msg.channel.name == "iv90":
+		channel_name="iv90"
+		await send_discord_channel_embeded_message('PoGoWHeights', channel_name, embed)
+	if iv and iv == 100 and msg.channel.name == "iv100":
+		channel_name="iv100"
+		await send_discord_channel_embeded_message('PoGoWHeights', channel_name, embed)
+	if iv and iv == 0:
+		channel_name="iv0"
+		await send_discord_channel_embeded_message('PoGoWHeights', channel_name, embed)
+	if level and level >= 20 and level <= 30:
+		channel_name = 'min-level-20'
+		await send_discord_channel_embeded_message('PoGoWHeights', channel_name, embed)
+	if level and level >= 30:
+		channel_name = 'min-level-30'
+		await send_discord_channel_embeded_message('PoGoWHeights', channel_name, embed)
 
 @client.event
 async def on_ready():
@@ -57,9 +75,7 @@ async def on_message(message):
 	if lat != None and lon != None:
 		boro = str(get_boro_from(lat=lat,lon=lon))
 
-	neighborhood=None
-
-	neighborhood=get_neighborhood_from(lat,lon)
+	neighborhood=str(get_neighborhood_from(lat,lon))
 
 	m=collections.defaultdict(int)
 	matches = message_pattern.match(message.content.replace("\n"," "))
@@ -118,38 +134,22 @@ async def on_message(message):
 
 	embed.color=color # color_from_message(message)
 
-
-	if str(neighborhood) in ["washington-heights","fort-george"]:
-		if str(message.channel.name).startswith('raid'):
+	is_raid=str(message.channel.name).startswith('raid')
+	if neighborhood in ["washington-heights","fort-george"]:
+		if is_raid:
 			channel_name="raids"
-			await send_discord_channel_embeded_message('PoGoWHeights', channel_name, embed)
-		else:
-			channel_name=str(neighborhood)
-			await send_discord_channel_embeded_message('PoGoWHeights', channel_name, embed)
+			return await send_discord_channel_embeded_message('PoGoWHeights', channel_name, embed)
 
-			if int(m['iv'])>=90 and int(m['level'])>=25:
-				send_groupme(message.clean_content,lat,lon)
+		channel_name=neighborhood
+		await send_discord_channel_embeded_message('PoGoWHeights', channel_name, embed)
 
-			if int(m['iv']) in range(90,99) and message.channel.name == "iv90":
-				channel_name="iv90"
-				await send_discord_channel_embeded_message('PoGoWHeights', channel_name, embed)
-			if int(m['iv'])==100 and message.channel.name == "iv100":
-				c=None
-				channel_name="iv100"
-				await send_discord_channel_embeded_message('PoGoWHeights', channel_name, embed)
-			if int(m['level']) in range (20,29) :
-				channel_name = 'min-level-20'
-				await send_discord_channel_embeded_message('PoGoWHeights', channel_name, embed)
-			if int(m['level'])>=30 :
-				channel_name = 'min-level-30'
-				await send_discord_channel_embeded_message('PoGoWHeights', channel_name, embed)
+		process_message_for_groupme(msg,m['iv'],level)
+		await process_message_for_discord(msg,m['iv'],level)
 
-	if str(message.channel.name).startswith('raid'):
-		return
-	elif boro.lower() in ["manhattan"]:
+	if boro.lower() in ["manhattan"] and (is_raid == False):
 		channel_name="manhattan"
 		content="**{}**\n{}".format(neighborhood,content)
-		embed.add_field(name="Area", value=str(neighborhood), inline=False)
+		embed.add_field(name="Area", value=neighborhood, inline=False)
 		await send_discord_channel_embeded_message('PoGoWHeights', channel_name, embed)
 
 
