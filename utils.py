@@ -44,7 +44,7 @@ def send_groupme(msg,lat=None,lon=None):
 def process_message_for_groupme(msg,iv,level=None):
 	print("process_message_for_groupme({},{},{})".format(msg.content,iv,level))
 	if iv == None:
-		return
+		iv = -1
 	iv = int(iv)
 
 	if level == None:
@@ -55,10 +55,9 @@ def process_message_for_groupme(msg,iv,level=None):
 	if is_weather_boosted(msg):
 		min_level+=5
 
-	if iv <= 0 or iv >= 93: #(14 * 100 // 15)
-		if (iv in [0,100]) or (level >= min_level):
-			print("	⬆︎	Sent to groupme!")
-			send_groupme(message.clean_content,lat,lon)
+	if (iv in [0,100]) or (iv >= 93 and level >= min_level):
+		print("	⬆︎	Sent to groupme!")
+		send_groupme(message.clean_content,lat,lon)
 
 def send_slack(msg,lat=None,lon=None):
 	slack_client.api_call("chat.postMessage",channel="general",text=re.sub(r'\*\*','`',msg))
