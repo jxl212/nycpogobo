@@ -11,7 +11,7 @@ class PokeStats:
     def update(self, pokemon_name):
         cur_time=datetime.now()
         self.pokemons[pokemon_name].put(cur_time)
-        remove_old_entries(pokemon_name)
+        self.remove_old_entries(pokemon_name)
 
     def spawn_per_hour(self,pokemon_name):
         size=self.pokemons[pokemon_name].qsize()
