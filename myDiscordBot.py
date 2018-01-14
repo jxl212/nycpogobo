@@ -107,7 +107,7 @@ async def on_message(message):
 
 
 	url_str=""
-	level=""
+	level=m['level'] if m and 'level' in m.keys() else 0
 	if name == 'Egg':
 		level = get_raid_level(message)
 		if level == "4":
