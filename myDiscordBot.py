@@ -8,6 +8,11 @@ from termcolor import cprint, colored
 from utils import *
 from poke_stats import *
 
+commands={
+    "!reload":load_config_from_db,
+    "!info":send_config_to_sender
+}
+
 logger = logging.getLogger("discord")
 logger.setLevel(logging.WARNING)
 stdout_handler = logging.StreamHandler(sys.stdout)
@@ -18,6 +23,10 @@ client = discord.Client()
 message_pattern = re.compile(r'.*?\*\*(?P<name>\w+)\*\*\s\((?P<iv>\d+)\%\)\s\-\s\(CP\:\s(?P<cp>\d+)\)\s-\s\(Level\:\s(?P<level>\d+)\).*\*\*Until\*\*\: (?P<time>\d\d\:\d\d\:\d\d)(?P<AMPM>\w\w).*IV\*\*\: (?P<atk>\d+) \- (?P<def>\d+) \- (?P<sta>\d+).*\*\*Gender\*\*: (?P<gender>\w+)?')
 google_map_pattern = re.compile(r'\*\*Google Map\*\*: \<https\://maps\.google\.com/maps\?q\=(?P<lat_lon>.*)\>')
 nycpokemap_pattern = re.compile(r'\*\*Map\*\*: \<https\://nycpokemap\.com\#.*\>')
+
+
+async def send_config_to_sender(msg):
+	await msg.channel.send(config)
 
 
 async def send_discord_channel_embeded_message(guild_name, channel_name, embeded_text):
@@ -53,9 +62,9 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-	if message.clean_content == "!reload":
-		print("!reloading...")
-		load_config_from_db()
+	if message.clean_content in commands.keys():
+		print(message.clean_content)
+		commands[message.clean_content](message)
 		return
 
 	if message.guild == None:
