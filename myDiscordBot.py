@@ -93,9 +93,8 @@ async def on_ready():
 @client.event
 async def on_message(message):
 	if message.clean_content in commands.keys():
-		cmd=message.clean_content.split(" ")[0]
 		print(cmd)
-		await commands[cmd](message)
+		await commands[message.clean_content](message)
 		return
 
 	if message.guild == None:
