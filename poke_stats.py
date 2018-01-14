@@ -19,11 +19,11 @@ class PokeStats:
         last=self.pokemons[pokemon_name].queue[-1]
         delta=last-first
         if delta.total_seconds() == 0:
-            return None, None, None
+            return 0, 0, 0
         per_second=int(size) / delta.total_seconds()
         per_minute=int(size) / delta.total_seconds() / 60
         per_hour=int(size) / delta.total_seconds() / 3660
-        return per_hour, per_minute, per_second
+        return int(per_hour * 1000)/1000, int(per_minute * 1000)/1000, int(per_second * 1000)/1000
 
     def remove_old_entries(self,pokemon_name,max_sec=int(60*60)):
         cur_time=datetime.now()
