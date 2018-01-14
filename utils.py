@@ -5,7 +5,7 @@ from slackclient import SlackClient
 from pymongo import MongoClient
 import collections
 from termcolor import cprint, colored
-from config import *
+from config import config, *
 
 
 mongodb_user=os.environ.get("MONGO_USER")
