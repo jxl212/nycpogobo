@@ -1,5 +1,5 @@
 from configparser import ConfigParser
-import os, re
+import os, re, collections
 from pymongo import MongoClient
 
 def load_config():
@@ -13,7 +13,9 @@ def load_config():
 
     ret=db.config.find_one({ "_id": {"$exists":True} },{"_id":False})
     parser.read_dict({"DEFAULT":ret})
-    Config = list(parser['DEFAULT'].items())
+    Config = collections.defaultdict(int)
+    for k in parser['DEFAULT'].keys():
+        Config[k]=parser['DEFAULT'][k]
     return Config
 
 Config = load_config()
