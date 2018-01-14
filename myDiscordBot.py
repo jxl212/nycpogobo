@@ -8,10 +8,7 @@ from termcolor import cprint, colored
 from utils import *
 from poke_stats import *
 
-commands={
-    "!reload":load_config_from_db,
-    "!info":send_config_to_sender
-}
+
 
 logger = logging.getLogger("discord")
 logger.setLevel(logging.WARNING)
@@ -28,6 +25,10 @@ nycpokemap_pattern = re.compile(r'\*\*Map\*\*: \<https\://nycpokemap\.com\#.*\>'
 async def send_config_to_sender(msg):
 	await msg.channel.send(config)
 
+commands={
+    "!reload":load_config_from_db,
+    "!info":send_config_to_sender
+}
 
 async def send_discord_channel_embeded_message(guild_name, channel_name, embeded_text):
 	c = discord.utils.get(client.get_all_channels(), guild__name=guild_name, name=str(channel_name))
