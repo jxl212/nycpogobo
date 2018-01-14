@@ -136,8 +136,8 @@ async def on_message(message):
 	embed.color=color # color_from_message(message)
 
 	is_raid=str(message.channel.name).startswith('raid')
-	txt=", ".join((name, "{}%".format(int(m['iv'])), str(level), neighborhood, str(is_raid), nycpokemap_link))
-	cprint(txt, "blue" if is_weather_boosted else None)
+	txt=", ".join((name, "{}%".format(int(m['iv'])), str(level), neighborhood, str(is_raid), str(get_weather_boosted(message)), nycpokemap_link))
+	cprint(txt, "blue" if is_weather_boosted(message) else None)
 	if neighborhood in ["washington-heights","fort-george"]:
 		if is_raid:
 			channel_name="raids"
