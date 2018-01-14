@@ -132,6 +132,12 @@ def color_from_message(msg):
 	d=get_atk_def_sta(msg)
 	return get_color_from_stats(d['atk'], d['def'], d['sta'])
 
+def get_level(msg):
+	key="level"
+	match = re.match(r'.*\s\(Level\:\s(?P<'+key+'>\d+)\)\s',msg.content.replace("\n"," "))
+	if match and key in match.groupdict().keys():
+		return int(match[key])
+	return 0
 def get_raid_level(msg):
 	key="level"
 	match = re.match(r'.*Level\: (?P<'+key+'>\d+)',msg.content.replace("\n"," "))
