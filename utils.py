@@ -52,10 +52,12 @@ def process_message_for_groupme(msg,iv,level=None):
 	level=int(level)
 
 	min_level=0
+	min_iv=93
 	if is_weather_boosted(msg):
 		min_level+=25
+		min_iv+=3
 
-	if (iv in [0,100]) or (iv >= 93 and level >= min_level):
+	if (iv in [0,100]) or (iv >= min_iv and level >= min_level):
 		print("	⬆︎	Sent to groupme!")
 		send_groupme(message.clean_content,lat,lon)
 
