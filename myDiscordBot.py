@@ -24,9 +24,11 @@ nycpokemap_pattern = re.compile(r'\*\*Map\*\*: \<https\://nycpokemap\.com\#.*\>'
 
 async def send_config_to_sender(msg):
 	await msg.channel.send(config)
+async def reload_config(msg):
+	return load_config_from_db(msg)
 
 commands={
-    "!reload":load_config_from_db,
+    "!reload":reload_config,
     "!info":send_config_to_sender
 }
 
@@ -65,7 +67,7 @@ async def on_ready():
 async def on_message(message):
 	if message.clean_content in commands.keys():
 		print(message.clean_content)
-		commands[message.clean_content](message)
+		await commands[message.clean_content](message)
 		return
 
 	if message.guild == None:
