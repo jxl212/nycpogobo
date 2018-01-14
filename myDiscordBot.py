@@ -23,7 +23,7 @@ nycpokemap_pattern = re.compile(r'\*\*Map\*\*: \<https\://nycpokemap\.com\#.*\>'
 
 
 async def send_config_to_sender(msg):
-	txt="{}".format("\n".join(["{}:{}".format(x,Config[x] for x in Config]))
+	txt='\n'.join(["{}".format({x:v}) for x,v in Config])
 	await msg.channel.send(txt)
 
 
