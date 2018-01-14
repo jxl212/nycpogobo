@@ -123,7 +123,7 @@ async def on_message(message):
 	if url_str != "":
 		embed.set_thumbnail(url=url_str)
 
-	print(name, "{}%".format(int(m['iv'])) if iv else None, level, nycpokemap_link,gmap_link)
+	print(name, "{}%".format(int(m['iv'])), level, nycpokemap_link)
 	color=0x00000
 	if int(m['iv']) == 100:
 		color|=0xD1C10F
