@@ -67,7 +67,7 @@ async def send_discord_channel_embeded_message(guild_name, channel_name, embeded
 		cprint("Error for guild: {} for channel: {}".format(guild_name,str(channel_name)),"red")
 
 async def process_message_for_discord(msg,embed,iv,level):
-	iv = int(iv) if iv else None
+	iv = int(iv) if iv else -1
 	level = int(level) if level else None
 	if iv and iv >= 90 and iv < 100 and msg.channel.name == "iv90":
 		channel_name="iv90"
@@ -133,7 +133,7 @@ async def on_message(message):
 	content = re.sub(r'\n+','\n',content)
 	content = content.replace("**L30+ ","**")
 
-	# content = "```md\n{name} ({iv}%) lvl: {level}, until: {t}{xm}\n```".format(name=m['name'], iv=m['iv'], level=m['level'], t=m['time'],xm=m['AMPM'])
+	# content = "```md\n{name} ({iv}%) lvl: {level}, until: {t}{xm}\n```".format(name=m['name'], iv=iv, level=m['level'], t=m['time'],xm=m['AMPM'])
 	gender="N.A."
 
 	if m and m['gender']=='Female':
@@ -170,11 +170,11 @@ async def on_message(message):
 		embed.set_thumbnail(url=url_str)
 
 	color=0x00000
-	if int(m['iv']) == 100:
+	if int(iv) == 100:
 		color|=0xD1C10F
 	if int(m['level']) >= 30:
 		color|=0x17479F
-	if int(m['level']) >= 20 and int(m['iv']) >= 90:
+	if int(m['level']) >= 20 and int(iv) >= 90:
 		color|=0xAE1B25
 
 	embed.color=color # color_from_message(message)
@@ -195,8 +195,8 @@ async def on_message(message):
 		channel_name=neighborhood
 		await send_discord_channel_embeded_message('PoGoWHeights', channel_name, embed)
 
-		process_message_for_groupme(message,lat,lon,m['iv'],level)
-		await process_message_for_discord(message,embed,m['iv'],level)
+		process_message_for_groupme(message,lat,lon,iv,level)
+		await process_message_for_discord(message,embed,iv,level)
 
 	if boro.lower() in ["manhattan"] and (is_raid == False):
 		channel_name="manhattan"
