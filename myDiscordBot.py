@@ -106,7 +106,7 @@ async def on_message(message):
 	if message.channel == None:
 		return
 
-	if message.channel.name in ["general","info","rules","token-needed","rais-chat"]:
+	if message.channel.name in ["general","info","rules","token-needed","rais-chat","iv100"]:
 		return
 
 
@@ -117,6 +117,9 @@ async def on_message(message):
 	nycpokemap_link = get_nycpokemap_url(message)
 	gmap_link = get_googlmap_url(message)
 	iv=get_iv(message)
+	if name.lower() in message.channel.name:
+		if iv >= 90:
+			return
 	level=get_level(message)
 	gender=get_gender(message)
 	is_raid=str(message.channel.name).startswith('raid')
