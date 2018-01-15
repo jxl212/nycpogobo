@@ -143,13 +143,13 @@ def get_level(msg):
 	match = re.match(r'.*\s\(Level\:\s(?P<'+key+'>\d+)\)\s',msg.content.replace("\n"," "))
 	if match and key in match.groupdict().keys():
 		return int(match[key])
-	return 0
+	return -1
 def get_raid_level(msg):
 	key="level"
 	match = re.match(r'.*Level\: (?P<'+key+'>\d+)',msg.content.replace("\n"," "))
 	if match and key in match.groupdict().keys():
-		return match[key]
-	return ""
+		return int(match[key])
+	return -1
 
 def get_iv(msg):
 	key="iv"
