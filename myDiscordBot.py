@@ -109,22 +109,34 @@ async def on_message(message):
 	if message.channel.name in ["general","info","rules","token-needed","rais-chat"]:
 		return
 
-	if not (message.channel.name in ["iv90"]):
-		return
+
 
 	boro=str(None)
 	lat,lon=get_lat_lon_from_message(message)
-
-
+	name=get_name(message)
+	nycpokemap_link = get_nycpokemap_url(message)
+	gmap_link = get_googlmap_url(message)
+	iv=get_iv(message)
+	level=get_level(message)
+	gender=get_gender(message)
+	is_raid=str(message.channel.name).startswith('raid')
+	weather=get_weather_boosted(message)
 	if lat != None and lon != None:
 		boro = str(get_boro_from(lat=lat,lon=lon))
 
 	neighborhood=str(get_neighborhood_from(lat,lon))
+	txt=", ".join((\
+		name,
+		colored("{}%".format(iv),attrs=['bold']),
+		colored(str(level),attrs=['bold']),
+		colored(gender,"green" if gender not in ["",None,"None"] else None, attrs=['bold']),
+		boro, neighborhood,
+		colored(weather, "blue" if is_weather_boosted(message) else None), nycpokemap_link))
 
-	m=collections.defaultdict(int)
-	matches = message_pattern.match(message.content.replace("\n"," "))
-	if matches:
-		m=matches
+
+	if is_raid == False and \
+	 	not (message.channel.name in ["iv90"]):
+		return
 
 	content = message.clean_content
 	content = content.split("\n")[:-3]
@@ -132,28 +144,9 @@ async def on_message(message):
 	content = re.sub(r'\[.*\]\s?','',content)
 	content = re.sub(r'\n+','\n',content)
 	content = content.replace("**L30+ ","**")
-
-	# content = "```md\n{name} ({iv}%) lvl: {level}, until: {t}{xm}\n```".format(name=m['name'], iv=iv, level=m['level'], t=m['time'],xm=m['AMPM'])
-	gender="N.A."
-
-	if m and m['gender']=='Female':
-		gender = "♀"
-	elif m and m['gender']=='Male':
-		gender = "♂"
-
-	name=get_name(message)
-	nycpokemap_link = get_nycpokemap_url(message)
-	gmap_link = get_googlmap_url(message)
-
-
-
 	embed = discord.Embed(title=name, description=content, url=nycpokemap_link, color=0x000000)
 
-
 	url_str=""
-	iv=get_iv(message)
-	level=get_level(message)
-
 	if name == 'Egg':
 		level = get_raid_level(message)
 		if level == "4":
@@ -170,16 +163,16 @@ async def on_message(message):
 		embed.set_thumbnail(url=url_str)
 
 	color=0x00000
-	if int(iv) == 100:
+	if iv == 100:
 		color|=0xD1C10F
-	if int(m['level']) >= 30:
+	if level >= 30:
 		color|=0x17479F
-	if int(m['level']) >= 20 and int(iv) >= 90:
+	if level >= 20 and int(iv) >= 90:
 		color|=0xAE1B25
 
 	embed.color=color # color_from_message(message)
 
-	is_raid=str(message.channel.name).startswith('raid')
+
 
 
 
@@ -189,8 +182,8 @@ async def on_message(message):
 			return await send_discord_channel_embeded_message('PoGoWHeights', channel_name, embed)
 
 		pokestats.update(name)
-		txt=", ".join((name, "{}%".format(iv), str(level), "(f:{})".format(pokestats.spawn_per_hour(name)), boro, neighborhood, str(is_raid), str(get_weather_boosted(message)), nycpokemap_link))
-		cprint(txt, "blue" if is_weather_boosted(message) else None)
+		# txt=", ".join((name, "{}%".format(iv), str(level), "(f:{})".format(pokestats.spawn_per_hour(name)), boro, neighborhood, str(is_raid), str(get_weather_boosted(message)), nycpokemap_link))
+		print(txt)
 
 		channel_name=neighborhood
 		await send_discord_channel_embeded_message('PoGoWHeights', channel_name, embed)

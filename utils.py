@@ -161,7 +161,7 @@ def get_iv(msg):
 def get_weather_boosted(msg):
     # **Weather boosted**: None
 	key="weather"
-	match = re.match(r'.*\*\*Weather boosted\*\*\: (?P<'+key+'>\w+)\s',msg.content.replace("\n"," "))
+	match = re.match(r'.*\*\*Weather boosted\*\*\: (?P<'+key+'>.*?)\s\s',msg.content.replace("\n","  "))
 	if match and key in match.groupdict().keys():
 		return match[key]
 	return ""
@@ -172,7 +172,16 @@ def is_weather_boosted(msg):
 	is_boosted = wb not in [None, "None", ""]
 	return is_boosted
 
-
+def get_gender(msg):
+    # **Weather boosted**: None
+	key="gender"
+	match = re.match(r'.*\*\*Gender\*\*: (?P<gender>[\w|\s]+)?',msg.content.replace("\n"," "))
+	if match and key in match.groupdict().keys():
+		if match[key] == "Female":
+			return "♀"
+		elif match[key]=='Male':
+			return "♂"
+	return "None"
 
 def load_config_from_db(msg):
 	Config = load_config()
