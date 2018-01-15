@@ -155,8 +155,8 @@ def get_iv(msg):
 	key="iv"
 	match = re.match(r".*?\*\*\s\((?P<"+key+">\d+)\%\)\s", msg.content.replace("\n"," "))
 	if match and key in match.groupdict().keys():
-		return match[key]
-	return None
+		return int(match[key])
+	return -1
 
 def get_weather_boosted(msg):
     # **Weather boosted**: None

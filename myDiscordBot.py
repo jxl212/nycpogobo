@@ -109,9 +109,8 @@ async def on_message(message):
 	if message.channel.name in ["general","info","rules","token-needed","rais-chat"]:
 		return
 
-	if message.channel.name in ["cp2500","iv90","iv100"]:
-		if get_name(message).lower() in [channel.name for channel in message.guild.channels]:
-			return
+	if not (message.channel.name in ["iv90"]):
+		return
 
 	boro=str(None)
 	lat,lon=get_lat_lon_from_message(message)
@@ -126,10 +125,6 @@ async def on_message(message):
 	matches = message_pattern.match(message.content.replace("\n"," "))
 	if matches:
 		m=matches
-
-	if m and int(m['iv']) == 100:
-		if message.channel.name != "iv100":
-			return
 
 	content = message.clean_content
 	content = content.split("\n")[:-3]
@@ -156,7 +151,7 @@ async def on_message(message):
 
 
 	url_str=""
-
+	iv=get_iv(message)
 	level=get_level(message)
 
 	if name == 'Egg':
@@ -194,7 +189,7 @@ async def on_message(message):
 			return await send_discord_channel_embeded_message('PoGoWHeights', channel_name, embed)
 
 		pokestats.update(name)
-		txt=", ".join((name, "{}%".format(int(m['iv'])), str(level), "(f:{})".format(pokestats.spawn_per_hour(name)), boro, neighborhood, str(is_raid), str(get_weather_boosted(message)), nycpokemap_link))
+		txt=", ".join((name, "{}%".format(iv), str(level), "(f:{})".format(pokestats.spawn_per_hour(name)), boro, neighborhood, str(is_raid), str(get_weather_boosted(message)), nycpokemap_link))
 		cprint(txt, "blue" if is_weather_boosted(message) else None)
 
 		channel_name=neighborhood
