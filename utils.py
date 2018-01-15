@@ -46,6 +46,7 @@ def send_groupme(msg,lat=None,lon=None):
 def process_message_for_groupme(msg,lat,lng,iv,level=None):
 	print("process_message_for_groupme({},{},{})".format(get_first_line(msg),iv,level))
 	if iv == None or iv < 0:
+		cprint("process a no IV messsage?!?: {}".format(msg.content),"red")
 		return
 	iv = int(iv)
 
@@ -175,13 +176,15 @@ def is_weather_boosted(msg):
 def get_gender(msg):
     # **Weather boosted**: None
 	key="gender"
-	match = re.match(r'.*\*\*Gender\*\*: (?P<gender>[\w|\s]+)?',msg.content.replace("\n"," "))
+	match = re.match(r'.*\*\*Gender\*\*: (?P<gender>\w+)',msg.content.replace("\n"," "))
 	if match and key in match.groupdict().keys():
 		if match[key] == "Female":
-			return "♀"
+			return "🚺"
 		elif match[key]=='Male':
-			return "♂"
-	return "None"
+			return "🚹"
+		elif match[key]=='None':
+			return "None"
+	return ""
 
 def load_config_from_db(msg):
 	Config = load_config()
