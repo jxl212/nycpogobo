@@ -45,8 +45,8 @@ def send_groupme(msg,lat=None,lon=None):
 
 def process_message_for_groupme(msg,lat,lng,iv,level=None):
 	print("process_message_for_groupme({},{},{})".format(get_first_line(msg),iv,level))
-	if iv == None:
-		iv = -1
+	if iv == None or iv < 0:
+		return
 	iv = int(iv)
 
 	if level == None:
@@ -155,8 +155,8 @@ def get_iv(msg):
 	key="iv"
 	match = re.match(r".*?\*\*\s\((?P<"+key+">\d+)\%\)\s", msg.content.replace("\n"," "))
 	if match and key in match.groupdict().keys():
-		return match[key]
-	return None
+		return int(match[key])
+	return -1
 
 def get_weather_boosted(msg):
     # **Weather boosted**: None
