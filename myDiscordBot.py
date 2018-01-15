@@ -128,9 +128,10 @@ async def on_message(message):
 		boro = str(get_boro_from(lat=lat,lon=lon))
 
 	neighborhood=str(get_neighborhood_from(lat,lon))
+	stats=get_atk_def_sta(message)
 	txt=", ".join((\
 		name,
-		colored("{}%".format(iv),attrs=['bold']),
+		colored("{}% ({})".format(iv,stats),attrs=['bold']),
 		colored(str(level),attrs=['bold']),
 		colored(gender,"green" if gender not in ["",None,"None"] else None, attrs=['bold']),
 		boro, neighborhood,
