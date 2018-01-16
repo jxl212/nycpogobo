@@ -137,8 +137,7 @@ async def on_message(message):
 		boro, neighborhood,
 		colored(weather, "blue" if is_weather_boosted(message) else None), nycpokemap_link))
 
-	if not is_raid:
-		print(txt)
+
 	if is_raid == False and \
 	 	not (message.channel.name in ["iv90"]):
 		return
@@ -188,7 +187,7 @@ async def on_message(message):
 
 		pokestats.update(name)
 		# txt=", ".join((name, "{}%".format(iv), str(level), "(f:{})".format(pokestats.spawn_per_hour(name)), boro, neighborhood, str(is_raid), str(get_weather_boosted(message)), nycpokemap_link))
-		# print(txt)
+		print(txt)
 
 		channel_name=neighborhood
 		await send_discord_channel_embeded_message('PoGoWHeights', channel_name, embed)
