@@ -43,7 +43,6 @@ class MessageContent:
 
 
 	def parse(self,message):
-		assert type(message) == type(discord.Message)
 		self._raw_content=message.clean_content
 		self.lat,self.lng = get_lat_lon_from_message(message)
 		self.boro = get_boro_from(self.lat,self.lng)
