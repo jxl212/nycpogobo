@@ -1,4 +1,4 @@
-import os, re
+import os, re, datetime
 import groupy
 from groupy import Client
 from slackclient import SlackClient
@@ -7,6 +7,69 @@ import collections
 from termcolor import cprint, colored
 
 from config import *
+
+
+class MessageContent:
+	"""docstring for McessageContent."""
+	__slots__ = ("_raw_content", "lat", "lng",
+	"boro", "neighborhood", "name",
+	"iv", "level", "cp", "gender",
+	"attack", "stamina", "defense",
+	"weather", "egg_level",
+	"despawn_time", "moveset",
+	"address", "nycpokemap_url")
+
+	def parse(self,message):
+		assert type(message) == type(discord.Message)
+		self._raw_content=message.clean_content
+		self.lat,self.lng = get_lat_lon_from_message(message)
+		self.boro = get_boro_from(self.lat,self.lng)
+		self.neighborhood = get_neighborhood_from(self.lat,self.lng)
+		self.name = get_name(message)
+		self.iv = get_iv(message)
+		self.level = get_level(message)
+		self.cp = get_cp(message)
+		self.gender = get_gender(message)
+		self.attack = get_attack(message)
+		self.stamina = get_stamina(message)
+		self.defense = get_defense(message)
+		self.weather = get_weather_boosted(message)
+		self.egg_level = get_raid_level(message)
+		self.despawn_time = get_despawn_time(message)
+		self.moveset= get_moveset(message)
+		self.address=get_address(message)
+		self.nycpokemap_url=get_nycpokemap_url(message)
+
+
+	def __str__(self):
+		return ", ".join((\
+			"{}".format(self.name),
+			colored("{}% ({}-{}-{})".format(self.iv,self.attack,self.defense,self.stamina),attrs=['bold']),
+			colored(str(self.level),attrs=['bold']),
+			colored(self.gender,"green" if self.gender not in ["",None,"None"] else None, attrs=['bold']),
+			"{}".format(self.boro),
+			"{}".format(self.neighborhood),
+			colored(self.weather, "blue" if self.weather not in [None,"None",""] else None),
+			"{}".format(self.nycpokemap_url)
+			)
+		)
+
+
+	def get_formated_embed_content(self):
+		return "{}".format(
+			"\n".join((\
+				"{}".format(self.name),
+				colored("{}% ({}-{}-{})".format(self.iv,self.attack,self.defense,self.stamina),attrs=['bold']),
+				colored(str(self.level),attrs=['bold']),
+				colored(self.gender,"green" if self.gender not in ["",None,"None"] else None, attrs=['bold']),
+				"{}".format(self.boro), "{}".format(self.neighborhood),
+				colored(self.weather, "blue" if self.weather not in [None,"None",""] else None),
+				"{}".format(self.nycpokemap_url)
+				)
+			)
+		)
+
+
 
 
 mongodb_user=os.environ.get("MONGO_USER")
@@ -51,7 +114,7 @@ def process_message_for_groupme(msg,lat,lng,iv,level=None):
 	iv = int(iv)
 
 	if level == None:
-		level=0
+		level=-1
 	level=int(level)
 
 	min_level=int(Config['min_level'])
@@ -103,10 +166,21 @@ def get_atk_def_sta(msg):
 
 def get_attack(msg):
 	d=get_atk_def_sta(msg)
+
 	if "atk" in d:
 		return int(d['atk'])
 	return None
 
+def get_defense(msg):
+	d=get_atk_def_sta(msg)
+	if "def" in d:
+		return int(d['def'])
+	return None
+def get_stamina(msg):
+	d=get_atk_def_sta(msg)
+	if "sta" in d:
+		return int(d['sta'])
+	return None
 def get_first_line(msg):
 	return msg.content.split("\n")[0].lstrip()
 
@@ -158,6 +232,12 @@ def get_iv(msg):
 	if match and key in match.groupdict().keys():
 		return int(match[key])
 	return -1
+def get_cp(msg):
+	key="cp"
+	match = re.match(r".*?\s\(CP\:\s(?P<"+key+">\d+)\)\s", msg.content.replace("\n"," "))
+	if match and key in match.groupdict().keys():
+		return int(match[key])
+	return -1
 
 def get_weather_boosted(msg):
     # **Weather boosted**: None
@@ -185,6 +265,28 @@ def get_gender(msg):
 		elif match[key]=='None':
 			return "None"
 	return ""
+
+def get_despawn_time(message):
+	text=re.sub(r"\n","",message.content)
+	match = re.match(r'.*?\*\*Until\*\*\: (?P<h>\d\d?):(?P<m>\d\d+?):(?P<s>\d+)(?P<AMPM>\w\w) .*?', text)
+	if match:
+		h=int(match['h']) + 12 if match['AMPM'] == "PM" else int(match['h'])
+		if h == 24:
+			h = 0
+		m=int(match['m'])
+		s=int(match['s'])
+		ts=datetime.datetime(message.created_at.year,message.created_at.month,message.created_at.day,h,m,s)
+		return ts
+def get_moveset(message):
+	text=re.sub(r"\n","  ",message.content)
+	match = re.match(r'.*?\*\*Moveset\*\*\: (?P<quick>.*?) - (?P<charge>.*?)\s\s', text)
+	if match:
+		return match.groupdict()
+def get_address(message):
+	text=re.sub(r"\n","  ",message.content)
+	match = re.match(r'.*?\*\*Address\*\*\: (?P<address>.*?)\s\s', text)
+	if match:
+		return match['address']
 
 def load_config_from_db(msg):
 	Config = load_config()
