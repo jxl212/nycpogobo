@@ -12,6 +12,8 @@ def load_config():
 
     ret=db.config.find_one({ "_id": {"$exists":True} },{"_id":False})
     parser.read_dict({"DEFAULT":ret})
+    for i in parser['DEFAULT'].items():
+        print(i)
     return parser['DEFAULT']
 
 def update_db():
