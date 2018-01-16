@@ -128,26 +128,18 @@ def send_groupme(msg,lat=None,lon=None):
 		attachments=[location]
 	groupme_bot.post(text=content,attachments=attachments)
 
-def process_message_for_groupme(msg,lat,lng,iv,level=None):
-	print("process_message_for_groupme({},{},{})".format(get_first_line(msg),iv,level))
-	if iv == None or iv < 0:
-		cprint("process a no IV messsage?!?: {}".format(msg.content),"red")
-		return
-	iv = int(iv)
-
-	if level == None:
-		level=-1
-	level=int(level)
+def process_message_for_groupme(data):
+	print("process_message_for_groupme ({})".format(message_details)
 
 	min_level=int(Config['min_level'])
 	min_iv=int(Config['min_iv'])
-	if is_weather_boosted(msg):
+	if data.weather not in [None, "None", ""]:
 		min_level+=int(Config['weather_level_mod'])
 		min_iv+=int(Config['weather_iv_mod'])
 
-	if (iv in [0,100]) or (iv >= min_iv and level >= min_level):
+	if (data.iv in [0,100]) or (data.iv >= min_iv and data.level >= min_level):
 		print("	⬆︎	Sent to groupme!")
-		send_groupme(msg.clean_content,lat,lng)
+		send_groupme(data._raw_content,data.lat,data.lng)
 
 def send_slack(msg,lat=None,lon=None):
 	slack_client.api_call("chat.postMessage",channel="general",text=re.sub(r'\*\*','`',msg))
