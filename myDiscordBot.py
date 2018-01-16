@@ -68,7 +68,7 @@ async def send_discord_channel_embeded_message(guild_name, channel_name, embeded
 
 async def process_message_for_discord(msg,embed,iv,level):
 	iv = int(iv) if iv else -1
-	level = int(level) if level else None
+	level = int(level) if level else -1
 	if iv and iv >= 90 and iv < 100 and msg.channel.name == "iv90":
 		channel_name="iv90"
 		await send_discord_channel_embeded_message('PoGoWHeights', channel_name, embed)
@@ -181,7 +181,7 @@ async def on_message(message):
 
 
 
-	if neighborhood in ["washington-heights","fort-george"]:
+	if neighborhood in ["washington-heights","fort-george","highbridge-park"]:
 		if is_raid:
 			channel_name="raids"
 			return await send_discord_channel_embeded_message('PoGoWHeights', channel_name, embed)
