@@ -112,7 +112,6 @@ async def on_message(message):
 
 	the_message_data=MessageContent()
 	the_message_data.parse(message)
-	print(the_message_data)
 
 	boro=str(None)
 	lat,lon=get_lat_lon_from_message(message)
@@ -190,13 +189,13 @@ async def on_message(message):
 
 		pokestats.update(name)
 		# txt=", ".join((name, "{}%".format(iv), str(level), "(f:{})".format(pokestats.spawn_per_hour(name)), boro, neighborhood, str(is_raid), str(get_weather_boosted(message)), nycpokemap_link))
-		print(txt)
+		print(the_message_data)
 
 		channel_name=neighborhood
 		await send_discord_channel_embeded_message('PoGoWHeights', channel_name, embed)
 
-		process_message_for_groupme(message,lat,lon,iv,level)
-		await process_message_for_discord(message,embed,iv,level)
+		process_message_for_groupme(the_message_data)
+		await process_message_for_discord(message,embed,the_message_data.iv,the_message_data.level)
 
 	if boro.lower() in ["manhattan"] and (is_raid == False):
 		channel_name="manhattan"
