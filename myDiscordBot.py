@@ -110,6 +110,9 @@ async def on_message(message):
 		return
 
 
+	the_message_data=MessageContent()
+	the_message_data.parse(message)
+	print(the_message_data)
 
 	boro=str(None)
 	lat,lon=get_lat_lon_from_message(message)

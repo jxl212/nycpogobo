@@ -11,6 +11,7 @@ from config import *
 
 class MessageContent:
 	"""docstring for McessageContent."""
+
 	__slots__ = ("_raw_content", "lat", "lng",
 	"boro", "neighborhood", "name",
 	"iv", "level", "cp", "gender",
@@ -18,6 +19,28 @@ class MessageContent:
 	"weather", "egg_level",
 	"despawn_time", "moveset",
 	"address", "nycpokemap_url")
+
+	def __init__(self):
+		self._raw_content=None
+		self.lat=None
+		self.lng=None
+		self.boro=None
+		self.neighborhood=None
+		self.name=None
+		self.iv=None
+		self.level=None
+		self.cp=None
+		self.gender=None
+		self.attack=None
+		self.stamina=None
+		self.defense=None
+		self.weather=None
+		self.egg_level=None
+		self.despawn_time=None
+		self.moveset=None
+		self.address=None
+		self.nycpokemap_url=None
+
 
 	def parse(self,message):
 		assert type(message) == type(discord.Message)
@@ -49,7 +72,7 @@ class MessageContent:
 			colored(self.gender,"green" if self.gender not in ["",None,"None"] else None, attrs=['bold']),
 			"{}".format(self.boro),
 			"{}".format(self.neighborhood),
-			colored(self.weather, "blue" if self.weather not in [None,"None",""] else None),
+			colored("{}".format(self.weather), "blue" if self.weather not in [None,"None",""] else None),
 			"{}".format(self.nycpokemap_url)
 			)
 		)
@@ -60,10 +83,10 @@ class MessageContent:
 			"\n".join((\
 				"{}".format(self.name),
 				colored("{}% ({}-{}-{})".format(self.iv,self.attack,self.defense,self.stamina),attrs=['bold']),
-				colored(str(self.level),attrs=['bold']),
-				colored(self.gender,"green" if self.gender not in ["",None,"None"] else None, attrs=['bold']),
+				colored("{}".format(self.level),attrs=['bold']),
+				colored("{}".format(self.gender),"green" if self.gender not in ["",None,"None"] else None, attrs=['bold']),
 				"{}".format(self.boro), "{}".format(self.neighborhood),
-				colored(self.weather, "blue" if self.weather not in [None,"None",""] else None),
+				colored("{}".format(self.weather), "blue" if self.weather not in [None,"None",""] else None),
 				"{}".format(self.nycpokemap_url)
 				)
 			)
