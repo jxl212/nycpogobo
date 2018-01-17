@@ -131,11 +131,11 @@ def send_groupme(msg,lat=None,lon=None):
 def process_message_for_groupme(data):
 	print("process_message_for_groupme " + data)
 
-	min_level=int(Config['min_level'])
-	min_iv=int(Config['min_iv'])
+	min_level=Config['min_level']
+	min_iv=Config['min_iv']
 	if data.weather not in [None, "None", ""]:
-		min_level+=int(Config['weather_level_mod'])
-		min_iv+=int(Config['weather_iv_mod'])
+		min_level+=Config['weather_level_mod']
+		min_iv+=Config['weather_iv_mod']
 
 	if (data.iv in [0,100]) or (data.iv >= min_iv and data.level >= min_level):
 		print("	⬆︎	Sent to groupme!")
