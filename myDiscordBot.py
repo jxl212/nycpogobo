@@ -113,36 +113,34 @@ async def on_message(message):
 	the_message_data=MessageContent()
 	the_message_data.parse(message)
 
-	boro=str(None)
-	lat,lon=get_lat_lon_from_message(message)
-	name=get_name(message)
-	nycpokemap_link = get_nycpokemap_url(message)
-	gmap_link = get_googlmap_url(message)
-	iv=get_iv(message)
-	if name.lower() in message.channel.name:
-		if iv >= 90:
+	# boro=str(None)
+	# lat,lon=get_lat_lon_from_message(message)
+	# name=get_name(message)
+	# nycpokemap_link = get_nycpokemap_url(message)
+	# gmap_link = get_googlmap_url(message)
+	# iv=get_iv(message)
+	if the_message_data.name.lower() in message.channel.name:
+		if the_message_data.iv >= 90:
+			print("ignoring " + the_message_data.name, the_message_data.iv ," cause double post prevention?")
 			return
-	level=get_level(message)
-	gender=get_gender(message)
+	# level=get_level(message)
+	# gender=get_gender(message)
 	is_raid=str(message.channel.name).startswith('raid')
-	weather=get_weather_boosted(message)
-	if lat != None and lon != None:
-		boro = str(get_boro_from(lat=lat,lon=lon))
+	# weather=get_weather_boosted(message)
+	# if lat != None and lon != None:
+	# 	boro = str(get_boro_from(lat=lat,lon=lon))
+    #
+	# neighborhood=str(get_neighborhood_from(lat,lon))
+	# stats=get_atk_def_sta(message)
+	# txt=", ".join((\
+	# 	name,
+	# 	colored("{}% ({})".format(iv,stats),attrs=['bold']),
+	# 	colored(str(level),attrs=['bold']),
+	# 	colored(gender,"green" if gender not in ["",None,"None"] else None, attrs=['bold']),
+	# 	boro, neighborhood,
+	# 	colored(weather, "blue" if is_weather_boosted(message) else None), nycpokemap_link))
+    #
 
-	neighborhood=str(get_neighborhood_from(lat,lon))
-	stats=get_atk_def_sta(message)
-	txt=", ".join((\
-		name,
-		colored("{}% ({})".format(iv,stats),attrs=['bold']),
-		colored(str(level),attrs=['bold']),
-		colored(gender,"green" if gender not in ["",None,"None"] else None, attrs=['bold']),
-		boro, neighborhood,
-		colored(weather, "blue" if is_weather_boosted(message) else None), nycpokemap_link))
-
-
-	if is_raid == False and \
-	 	not (message.channel.name in ["iv90"]):
-		return
 
 	content = message.clean_content
 	content = content.split("\n")[:-3]
@@ -150,30 +148,30 @@ async def on_message(message):
 	content = re.sub(r'\[.*\]\s?','',content)
 	content = re.sub(r'\n+','\n',content)
 	content = content.replace("**L30+ ","**")
-	embed = discord.Embed(title=name, description=content, url=nycpokemap_link, color=0x000000)
+	embed = discord.Embed(title=the_message_data.name, description=content, url=nycpokemap_link, color=0x000000)
 
 	url_str=""
-	if name == 'Egg':
-		level = get_raid_level(message)
-		if level == 4:
+	if the_message_data.name == 'Egg':
+		# level = get_raid_level(message)
+		if the_message_data.egg_level == 4:
 			url_str="https://pro-rankedboost.netdna-ssl.com/wp-content/uploads/2017/06/Pokemon-GO-Rare-Egg-Yellow.png"
-		elif level == 5:
+		elif the_message_data.egg_level == 5:
 			url_str="https://pro-rankedboost.netdna-ssl.com/wp-content/uploads/2017/06/Pokemon-GO-Legendary-Egg-120x120.png"
 		else:
 			first_line = message.content.split("\n")[0].lstrip().rstrip()
 			cprint(first_line,"red")
-	elif name:
+	elif the_message_data.name:
 		url_str='https://rankedboost.com/wp-content/plugins/ice/pokemon/'+name+'-Pokemon-Go.png'
 
 	if url_str != "":
 		embed.set_thumbnail(url=url_str)
 
 	color=0x00000
-	if iv == 100:
+	if the_message_data.iv == 100:
 		color|=0xD1C10F
-	if level >= 30:
+	if the_message_data.level >= 30:
 		color|=0x17479F
-	if level >= 20 and int(iv) >= 90:
+	if the_message_data.level >= 20 and the_message_data.iv >= 90:
 		color|=0xAE1B25
 
 	embed.color=color # color_from_message(message)
@@ -182,25 +180,25 @@ async def on_message(message):
 
 
 
-	if neighborhood in ["washington-heights","fort-george","highbridge-park"]:
+	if the_message_data.neighborhood in ["washington-heights","fort-george","highbridge-park"]:
 		if is_raid:
 			channel_name="raids"
 			return await send_discord_channel_embeded_message('PoGoWHeights', channel_name, embed)
 
-		pokestats.update(name)
+		pokestats.update(the_message_data.name)
 		# txt=", ".join((name, "{}%".format(iv), str(level), "(f:{})".format(pokestats.spawn_per_hour(name)), boro, neighborhood, str(is_raid), str(get_weather_boosted(message)), nycpokemap_link))
 		print(the_message_data)
 
-		channel_name=neighborhood
+		channel_name=the_message_data.neighborhood
 		await send_discord_channel_embeded_message('PoGoWHeights', channel_name, embed)
 
 		process_message_for_groupme(the_message_data)
 		await process_message_for_discord(message,embed,the_message_data.iv,the_message_data.level)
 
-	if boro.lower() in ["manhattan"] and (is_raid == False):
+	if the_message_data.boro.lower() in ["manhattan"] and (is_raid == False):
 		channel_name="manhattan"
-		content="**{}**\n{}".format(neighborhood,content)
-		embed.add_field(name="Area", value=neighborhood, inline=False)
+		content="**{}**\n{}".format(the_message_data.neighborhood,content)
+		embed.add_field(name="Area", value=the_message_data.neighborhood, inline=False)
 		await send_discord_channel_embeded_message('PoGoWHeights', channel_name, embed)
 
 
