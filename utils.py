@@ -114,7 +114,7 @@ class MessageContent:
 		)
 
 	def is_raid(self):
-		return data.original_channel_name.startswith('raid')
+		return self.original_channel_name.startswith('raid')
 
 
 
