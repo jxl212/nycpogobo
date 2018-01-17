@@ -129,7 +129,7 @@ def send_groupme(msg,lat=None,lon=None):
 	groupme_bot.post(text=content,attachments=attachments)
 
 def process_message_for_groupme(data):
-	print("process_message_for_groupme ({})".format(message_details)
+	print("process_message_for_groupme " + data)
 
 	min_level=int(Config['min_level'])
 	min_iv=int(Config['min_iv'])
