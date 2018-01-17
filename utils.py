@@ -65,10 +65,10 @@ class MessageContent:
 			elif self.egg_level == 5:
 				url_str="https://pro-rankedboost.netdna-ssl.com/wp-content/uploads/2017/06/Pokemon-GO-Legendary-Egg-120x120.png"
 			else:
-				first_line = message.content.split("\n")[0].lstrip().rstrip()
+				first_line = self._raw_content.split("\n")[0].lstrip().rstrip()
 				cprint(first_line,"red")
 		elif self.name:
-			url_str='https://rankedboost.com/wp-content/plugins/ice/pokemon/'+name+'-Pokemon-Go.png'
+			url_str='https://rankedboost.com/wp-content/plugins/ice/pokemon/'+self.name+'-Pokemon-Go.png'
 
 		if url_str != "":
 			self.embed.set_thumbnail(url=url_str)
