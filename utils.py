@@ -1,6 +1,7 @@
 import os, re, datetime
 import groupy
 from groupy import Client
+import discord
 from slackclient import SlackClient
 from pymongo import MongoClient
 import collections
@@ -18,28 +19,10 @@ class MessageContent:
 	"attack", "stamina", "defense",
 	"weather", "egg_level",
 	"despawn_time", "moveset",
-	"address", "nycpokemap_url")
+	"address", "nycpokemap_url","embed","original_channel_name")
 
-	def __init__(self):
-		self._raw_content=None
-		self.lat=None
-		self.lng=None
-		self.boro=None
-		self.neighborhood=None
-		self.name=None
-		self.iv=None
-		self.level=None
-		self.cp=None
-		self.gender=None
-		self.attack=None
-		self.stamina=None
-		self.defense=None
-		self.weather=None
-		self.egg_level=None
-		self.despawn_time=None
-		self.moveset=None
-		self.address=None
-		self.nycpokemap_url=None
+	def __init__(self,message):
+		self.parse(message)
 
 
 	def parse(self,message):
@@ -61,6 +44,44 @@ class MessageContent:
 		self.moveset= get_moveset(message)
 		self.address=get_address(message)
 		self.nycpokemap_url=get_nycpokemap_url(message)
+		self.make_embed_from_message()
+		self.original_channel_name=message.channel.name
+
+
+	def make_embed_from_message(self):
+		content = self._raw_content
+		content = content.split("\n")[:-3]
+		content = "\n".join(content)
+		content = re.sub(r'\[.*\]\s?','',content)
+		content = re.sub(r'\n+','\n',content)
+		content = content.replace("**L30+ ","**")
+		self.embed = discord.Embed(title=self.name, description=content, url=self.nycpokemap_url, color=0x000000)
+
+		url_str=""
+		if self.name == 'Egg':
+			# level = get_raid_level(message)
+			if self.egg_level == 4:
+				url_str="https://pro-rankedboost.netdna-ssl.com/wp-content/uploads/2017/06/Pokemon-GO-Rare-Egg-Yellow.png"
+			elif self.egg_level == 5:
+				url_str="https://pro-rankedboost.netdna-ssl.com/wp-content/uploads/2017/06/Pokemon-GO-Legendary-Egg-120x120.png"
+			else:
+				first_line = message.content.split("\n")[0].lstrip().rstrip()
+				cprint(first_line,"red")
+		elif self.name:
+			url_str='https://rankedboost.com/wp-content/plugins/ice/pokemon/'+name+'-Pokemon-Go.png'
+
+		if url_str != "":
+			self.embed.set_thumbnail(url=url_str)
+
+		color=0x00000
+		if self.iv == 100:
+			color|=0xD1C10F
+		if self.level >= 30:
+			color|=0x17479F
+		if self.level >= 20 and self.iv >= 90:
+			color|=0xAE1B25
+
+		self.embed.color=color # color_from_message(message)
 
 
 	def __str__(self):
@@ -160,16 +181,16 @@ def get_boro_from(lat,lon):
 	if boros:
 		boro = str(boros['properties']['BoroName'])
 		return boro
-	return None
+	return ""
 
 def get_neighborhood_from(lat,lon):
 	if None in [lat,lon]:
-		return None
+		return ""
 	name_field="name2"
 	neighborhoods=db.neighborhoods.find_one({ "geometry": { "$geoIntersects": { "$geometry": { "type": "Point", "coordinates": [ float(lon), float(lat) ] } } } },{name_field:1})
 	if neighborhoods :
 		return str(neighborhoods[name_field])
-	return None
+	return ""
 
 def get_atk_def_sta(msg):
 	d=collections.defaultdict(int)
@@ -183,18 +204,18 @@ def get_attack(msg):
 
 	if "atk" in d:
 		return int(d['atk'])
-	return None
+	return -1
 
 def get_defense(msg):
 	d=get_atk_def_sta(msg)
 	if "def" in d:
 		return int(d['def'])
-	return None
+	return -1
 def get_stamina(msg):
 	d=get_atk_def_sta(msg)
 	if "sta" in d:
 		return int(d['sta'])
-	return None
+	return -1
 def get_first_line(msg):
 	return msg.content.split("\n")[0].lstrip()
 
@@ -204,7 +225,7 @@ def get_name(msg):
 	match = re.match(r".*?\*\*(?P<name>\w+)\*\*.*?", first_line)
 	if match and "name" in match.groupdict().keys():
 		return match["name"]
-	return
+	return ""
 
 def get_nycpokemap_url(msg):
 	match = re.match(r'.*<(?P<link>https\://nycpokemap\.com.*?)>\s',msg.content.replace("\n"," "))
