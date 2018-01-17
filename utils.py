@@ -19,7 +19,8 @@ class MessageContent:
 	"attack", "stamina", "defense",
 	"weather", "egg_level",
 	"despawn_time", "moveset",
-	"address", "nycpokemap_url","embed","original_channel_name")
+	"address", "nycpokemap_url","embed",
+	"original_channel_name")
 
 	def __init__(self,message):
 		self.parse(message)
@@ -112,6 +113,8 @@ class MessageContent:
 			)
 		)
 
+	def is_raid(self):
+		return data.original_channel_name.startswith('raid')
 
 
 

@@ -71,9 +71,13 @@ async def process_message_for_discord(data):
 	if data.iv >= 90 and data.iv < 100:
 		channel_name="iv90"
 		await send_discord_channel_embeded_message('PoGoWHeights', channel_name, data.embed)
+		if data.original_channel_name != "iv90":
+			print("should we be ignoring ? " + data.name, data.iv, data.original_channel_name ," cause double post prevention?")
 	elif data.iv == 100:
-			channel_name="iv100"
-			await send_discord_channel_embeded_message('PoGoWHeights', channel_name, data.embed)
+		channel_name="iv100"
+		await send_discord_channel_embeded_message('PoGoWHeights', channel_name, data.embed)
+		if data.original_channel_name != "iv100":
+			print("should we be ignoring ? " + data.name, data.iv, data.original_channel_name ," cause double post prevention?")
 	elif data.iv == 0:
 		channel_name="iv0"
 		await send_discord_channel_embeded_message('PoGoWHeights', channel_name, data.embed)
@@ -108,21 +112,10 @@ async def on_message(message):
 	if message.channel.name in ["general","info","rules","token-needed","rais-chat"]:
 		return
 
-
 	the_message_data=MessageContent(message)
 
-
-
-	if message.channel.name not in ["iv90"]:
-		if the_message_data.iv >= 90:
-			print("ignoring " + the_message_data.name, the_message_data.iv ," cause double post prevention?")
-			return
-
-	is_raid=str(message.channel.name).startswith('raid')
-
-
 	if the_message_data.neighborhood in ["washington-heights","fort-george","highbridge-park"]:
-		if is_raid:
+		if the_message_data.is_raid():
 			channel_name="raids"
 			return await send_discord_channel_embeded_message('PoGoWHeights', channel_name, embed)
 
@@ -136,7 +129,7 @@ async def on_message(message):
 		process_message_for_groupme(the_message_data)
 		await process_message_for_discord(the_message_data)
 
-	if the_message_data.boro.lower() in ["manhattan"] and (is_raid == False):
+	if the_message_data.boro.lower() in ["manhattan"] and (the_message_data.is_raid() == False):
 		channel_name="manhattan"
 		# content="**{}**\n{}".format(the_message_data.neighborhood,content)
 		the_message_data.embed.add_field(name="Area", value=the_message_data.neighborhood, inline=False)
