@@ -117,7 +117,7 @@ async def on_message(message):
 	if the_message_data.neighborhood in ["washington-heights","fort-george","highbridge-park"]:
 		if the_message_data.is_raid():
 			channel_name="raids"
-			return await send_discord_channel_embeded_message('PoGoWHeights', channel_name, embed)
+			return await send_discord_channel_embeded_message('PoGoWHeights', channel_name, the_message_data.embed)
 
 		pokestats.update(the_message_data.name)
 		# txt=", ".join((name, "{}%".format(iv), str(level), "(f:{})".format(pokestats.spawn_per_hour(name)), boro, neighborhood, str(is_raid), str(get_weather_boosted(message)), nycpokemap_link))
