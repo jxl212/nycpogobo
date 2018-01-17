@@ -138,7 +138,7 @@ async def on_message(message):
 
 	if the_message_data.boro.lower() in ["manhattan"] and (is_raid == False):
 		channel_name="manhattan"
-		content="**{}**\n{}".format(the_message_data.neighborhood,content)
+		# content="**{}**\n{}".format(the_message_data.neighborhood,content)
 		the_message_data.embed.add_field(name="Area", value=the_message_data.neighborhood, inline=False)
 		await send_discord_channel_embeded_message('PoGoWHeights', channel_name, the_message_data.embed)
 
