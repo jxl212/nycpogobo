@@ -128,13 +128,12 @@ async def on_message(message):
 		return
 
 	the_message_data=messagecontent.MessageContent(message)
-	print(the_message_data)
 
-	if the_message_data.iv == 100 and the_message_data.original_channel_name != "iv100":
-		# print("ignoring" + the_message_data.name, the_message_data.iv, the_message_data.original_channel_name ," cause double post")
-		# print(colored(str(the_message_data),"red"))
+	if the_message_data.iv >= 90 and the_message_data.original_channel_name != "iv90":
+		print(colored(re.sub(r"\x1b\[\d+m","",str(the_message_data)),"white",attrs=[]))
 		return
 
+	print(the_message_data)
 	if the_message_data.boro.lower() in ["manhattan"] and (the_message_data.is_raid() == False):
 		channel_name="manhattan"
 		# print(the_message_data)
