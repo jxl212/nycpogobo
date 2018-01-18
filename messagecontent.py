@@ -84,12 +84,12 @@ class MessageContent:
 
 		if not self.is_raid():
 			txt+=" "+colored("{}%".format(self.iv).rjust(5), attrs=['bold'] if self.iv > 90 else [])
-			txt+=" "+colored("({:>2} / {:>2} / {:>2})".format(self.attack,self.defense,self.stamina)),attrs=['bold'] if self.attack == 15 else [])
+			txt+=" "+colored("({:>2} / {:>2} / {:>2})".format(self.attack,self.defense,self.stamina), attrs=['bold'] if self.attack == 15 else [])
 			txt+=" "+colored("{}".format(self.level).ljust(3),attrs=['bold'] if self.level > 30 else [])
 		else:
 			txt+= " level "+colored("{}".format(self.egg_level),attrs=['bold'])
 
-		txt+=" {:10}".format(self.gender if self.gender: else "")
+		txt+=" {:10}".format(self.gender if self.gender else "")
 		txt+=" {:15}".format(self.boro)
 		txt+=" {:20.20}".format(self.neighborhood)
 		txt+=" "+colored("{:<15}".format(self.weather), "blue" if self.weather not in [None,"None",""] else None)
