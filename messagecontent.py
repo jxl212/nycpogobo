@@ -84,16 +84,16 @@ class MessageContent:
 
 		if not self.is_raid():
 			txt+=" "+colored("{}%".format(self.iv).rjust(5), attrs=['bold'] if self.iv > 90 else [])
-			txt+=" "+colored("({}/{}/{})".format(self.attack,self.defense,self.stamina).ljust(12),attrs=['bold'] if self.attack == 15 else [])
+			txt+=" "+colored("({:>2} / {:>2} / {:>2})".format(self.attack,self.defense,self.stamina)),attrs=['bold'] if self.attack == 15 else [])
 			txt+=" "+colored("{}".format(self.level).ljust(3),attrs=['bold'] if self.level > 30 else [])
 		else:
-			txt+=" level "+colored("{}".format(self.egg_level),attrs=['bold'])
-		if self.gender:
-			txt+=" {}".format(self.gender).ljust(10)
-		txt+=" {}".format(self.boro).ljust(15)
-		txt+=" {}".format(self.neighborhood).ljust(25)
-		if self.weather:
-			txt+=" "+colored("{}".format(self.weather).ljust(15), "blue" if self.weather not in [None,"None",""] else None)
+			txt+= " level "+colored("{}".format(self.egg_level),attrs=['bold'])
+
+		txt+=" {:10}".format(self.gender if self.gender: else "")
+		txt+=" {:15}".format(self.boro)
+		txt+=" {:20.20}".format(self.neighborhood)
+		txt+=" "+colored("{:<15}".format(self.weather), "blue" if self.weather not in [None,"None",""] else None)
+		txt+=" {:10}".format(self.original_channel_name)
 		txt+=" {}".format(self.nycpokemap_url)
 		if self.iv > 90 and self.attack == 15 and self.level > 30:
 			txt = colored(re.sub(r"\x1b\[\d+m","",txt),"yellow",attrs=['bold','reverse'])
