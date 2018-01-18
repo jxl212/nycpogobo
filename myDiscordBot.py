@@ -31,9 +31,9 @@ known_gyms={
 	"https://nycpokemap.com/gym.html#40.846356,-73.940706":"J. Hood Wright Park"
 }
 
-async def reload_config(msg):
-	load_config_from_db(msg)
-	print(Config)
+# async def reload_config(msg):
+# 	load_config_from_db(msg)
+# 	print(Config)
 
 # async def send_config_to_sender(msg):
 # 	txt=str(Config)
@@ -129,6 +129,9 @@ async def on_message(message):
 	the_message_data=messagecontent.MessageContent(message)
 
 	if the_message_data.iv >= 90 and the_message_data.original_channel_name != "iv90":
+		# print(colored(re.sub(r"\x1b\[\d+m","",str(the_message_data)),"white",attrs=[]))
+		return
+	if the_message_data.cp >= 2500 and the_message_data.original_channel_name != "cp2500":
 		# print(colored(re.sub(r"\x1b\[\d+m","",str(the_message_data)),"white",attrs=[]))
 		return
 

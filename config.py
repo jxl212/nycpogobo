@@ -1,9 +1,9 @@
-from configparser import ConfigParser
+# from configparser import ConfigParser
 import os, re, collections
 from pymongo import MongoClient
 
 def load_config():
-    parser=ConfigParser()
+    # parser=ConfigParser()
     mongodb_user=os.environ.get("MONGO_USER")
     mongodb_pass=os.environ.get("MONGO_PASS")
 
@@ -11,10 +11,11 @@ def load_config():
     db = mongo_client.nyc
 
     ret=db.config.find_one({ "_id": {"$exists":True} },{"_id":False})
-    parser.read_dict({"DEFAULT":ret})
-    for i in parser['DEFAULT'].items():
-        print(i)
-    return parser
+    ret2=db.pokemons.find   ({ "_id": {"$exists":True} },{"_id":False})
+    # parser.read_dict({"DEFAULT":ret})
+    # for i in parser['DEFAULT'].items():
+    #     print(i)
+    return ret,ret2
 
 # def update_db():
 #     parser=ConfigParser()
@@ -27,4 +28,4 @@ def load_config():
 #     db.config.replace_one({ "_id": {"$exists":True} },Config['DEFAULT'])
 #     return
 
-Config = load_config()
+Config, ConfigPokemons = load_config()

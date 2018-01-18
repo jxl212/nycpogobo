@@ -61,11 +61,11 @@ def send_groupme(msg,lat=None,lon=None):
 	groupme_bot.post(text=content,attachments=attachments)
 
 def process_message_for_groupme(data):
-	min_level=Config.getint('DEFAULT','min_level')
-	min_iv=Config.getint('DEFAULT','min_iv')
+	min_level=int(Config['min_level'])
+	min_iv=int(Config['min_iv'])
 	if data.weather not in [None, "None", ""]:
-		min_level+=Config.getint('DEFAULT','weather_level_mod')
-		min_iv+=Config.getint('DEFAULT','weather_iv_mod')
+		min_level+=int(Config['weather_level_mod'])
+		min_iv+=int(Config['weather_iv_mod'])
 	min_iv=min(100,min_iv)
 	min_level=min(35,min_level)
 	# cprint('min_iv: {} iv {}'.format(min_iv,data.iv),"cyan",end = ' ')
