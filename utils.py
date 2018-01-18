@@ -29,8 +29,6 @@ print("I found a groupme_bot named: "+colored(groupme_bot.name,attrs=['bold']))
 groupme_test_bot.post(text="I am alive....!")
 
 
-def groupme_test_bot_post(txt):
-	groupme_test_bot.post(text=text)
 
 
 
@@ -46,6 +44,9 @@ def format_for_groupme(content):
 	content = re.sub(r'\n+','\n',content)
 	content = re.sub(r'\[.*?\]\s?','',content)
 	return content
+
+def groupme_test_bot_post(message):
+	groupme_test_bot.post(text=format_for_groupme(message.clean_content))
 
 def send_groupme(msg,lat=None,lon=None):
 	location=None
