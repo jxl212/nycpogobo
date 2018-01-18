@@ -97,7 +97,10 @@ class MessageContent:
 		txt+=" {}".format(self.nycpokemap_url)
 		if self.iv > 90 and self.attack == 15 and self.level > 30:
 			txt = colored(re.sub(r"\x1b\[\d+m","",txt),"yellow",attrs=['bold','reverse'])
+		elif self.iv == 100:
+			txt = colored(re.sub(r"\x1b\[\d+m","",txt),"green",attrs=['bold','reverse'])
 		return txt
+
 
 
 
