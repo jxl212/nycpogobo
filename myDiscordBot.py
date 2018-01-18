@@ -128,7 +128,7 @@ async def on_message(message):
 		return
 
 	the_message_data=messagecontent.MessageContent(message)
-	# print(the_message_data)
+	print(the_message_data)
 
 	if the_message_data.iv == 100 and the_message_data.original_channel_name != "iv100":
 		# print("ignoring" + the_message_data.name, the_message_data.iv, the_message_data.original_channel_name ," cause double post")
