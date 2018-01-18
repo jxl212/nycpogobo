@@ -128,20 +128,20 @@ async def on_message(message):
 		return
 
 	the_message_data=messagecontent.MessageContent(message)
-	print(the_message_data)
-	
+	# print(the_message_data)
+
 	if the_message_data.iv == 100 and the_message_data.original_channel_name != "iv100":
-		print("ignoring" + the_message_data.name, the_message_data.iv, the_message_data.original_channel_name ," cause double post")
-		print(colored(str(the_message_data),"cyan"))
+		# print("ignoring" + the_message_data.name, the_message_data.iv, the_message_data.original_channel_name ," cause double post")
+		# print(colored(str(the_message_data),"red"))
 		return
 
 	if the_message_data.boro.lower() in ["manhattan"] and (the_message_data.is_raid() == False):
 		channel_name="manhattan"
-		print(the_message_data)
+		# print(the_message_data)
 		await send_discord_channel_embeded_message('PoGoWHeights', channel_name, the_message_data.embed)
 
 		if the_message_data.neighborhood in ["washington-heights","fort-george","highbridge-park"]:
-			# print(the_message_data)
+			print(the_message_data)
 			if the_message_data.is_raid():
 				channel_name="raids"
 				if the_message_data.nycpokemap_url in known_gyms.keys():

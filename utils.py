@@ -23,6 +23,7 @@ groupme_client = Client.from_token(os.environ.get('GROUPME_TOKEN'))
 groupme_bot_id=os.environ.get('GROUPME_BOT_ID')
 groupme_bot=[b for b in groupme_client.bots.list() if b.data['bot_id']==groupme_bot_id][0]
 
+print("I found a groupme_bot named: "+colored(groupme_bot.name,attrs=['bold']))
 # slack_client = SlackClient(os.environ.get('SLACK_BOT_TOKEN'))
 
 def send_groupme(msg,lat=None,lon=None):
