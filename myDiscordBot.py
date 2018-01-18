@@ -82,7 +82,6 @@ async def send_discord_channel_embeded_message(guild_name, channel_name, embeded
 		cprint("Error for guild: {} for channel: {}".format(guild_name,str(channel_name)),"red")
 
 async def process_message_for_discord(data):
-
 	if data.iv >= 90 and data.iv < 100:
 		channel_name="iv90"
 		await send_discord_channel_embeded_message('PoGoWHeights', channel_name, data.embed)
@@ -130,7 +129,7 @@ async def on_message(message):
 	the_message_data=messagecontent.MessageContent(message)
 
 	if the_message_data.iv >= 90 and the_message_data.original_channel_name != "iv90":
-		print(colored(re.sub(r"\x1b\[\d+m","",str(the_message_data)),"white",attrs=[]))
+		# print(colored(re.sub(r"\x1b\[\d+m","",str(the_message_data)),"white",attrs=[]))
 		return
 
 	# print(the_message_data)
