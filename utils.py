@@ -26,8 +26,11 @@ groupme_bot=[b for b in groupme_client.bots.list() if b.data['bot_id']==groupme_
 groupme_test_bot=[b for b in groupme_client.bots.list() if b.data['bot_id']==groupme_bot_id_test][0]
 
 print("I found a groupme_bot named: "+colored(groupme_bot.name,attrs=['bold']))
-groupme_test_bot.post(text="I am alive....!")
+groupme_test_bot_post("I am alive....!")
 
+
+def groupme_test_bot_post(txt):
+	groupme_test_bot.post(text=text)
 
 def format_for_groupme(content):
 	content = str(content).split("\n")
