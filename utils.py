@@ -21,17 +21,16 @@ if db is None:
 print("mongodb server version: "+colored(mongo_client.server_info()['version'],attrs=['bold']))
 groupme_client = Client.from_token(os.environ.get('GROUPME_TOKEN'))
 groupme_bot_id=os.environ.get('GROUPME_BOT_ID')
+groupme_bot_id_test="d435bc3deb78bb4d8158d47542"
 groupme_bot=[b for b in groupme_client.bots.list() if b.data['bot_id']==groupme_bot_id][0]
+groupme_test_bot=[b for b in groupme_client.bots.list() if b.data['bot_id']==groupme_bot_id_test][0]
 
 print("I found a groupme_bot named: "+colored(groupme_bot.name,attrs=['bold']))
-# slack_client = SlackClient(os.environ.get('SLACK_BOT_TOKEN'))
+groupme_test_bot.post(text="I am alive....!")
 
-def send_groupme(msg,lat=None,lon=None):
-	location=None
-	if lat != None and lon != None:
-		location=groupy.attachments.Location(name="loc",lat=lat,lng=lon)
 
-	content = str(msg).split("\n")
+def format_for_groupme(content):
+	content = str(content).split("\n")
 	if len(content)>3:
 		content=content[:-2]
 	content = "\n".join(content)
@@ -41,6 +40,14 @@ def send_groupme(msg,lat=None,lon=None):
 	content = re.sub(r'Map: ','',content)
 	content = re.sub(r'\n+','\n',content)
 	content = re.sub(r'\[.*?\]\s?','',content)
+	return content
+
+def send_groupme(msg,lat=None,lon=None):
+	location=None
+	if lat != None and lon != None:
+		location=groupy.attachments.Location(name="loc",lat=lat,lng=lon)
+
+	content = format_for_groupme(msg)
 
 	attachments=None
 	if location != None:
@@ -55,8 +62,8 @@ def process_message_for_groupme(data):
 		min_iv+=Config.getint('DEFAULT','weather_iv_mod')
 	min_iv=min(100,min_iv)
 	min_level=min(35,min_level)
-	cprint('min_iv: {} iv {}'.format(min_iv,data.iv),"cyan",end = ' ')
-	cprint('min_iv: {} iv {}'.format(min_level,data.level),"cyan", end=' ')
+	# cprint('min_iv: {} iv {}'.format(min_iv,data.iv),"cyan",end = ' ')
+	# cprint('min_iv: {} iv {}'.format(min_level,data.level),"cyan", end=' ')
 	if (data.iv in [0,100]) or (data.iv >= min_iv and data.level >= min_level):
 		cprint("	✅	Sent to groupme!","green")
 		send_groupme(data._raw_content,data.lat,data.lng)

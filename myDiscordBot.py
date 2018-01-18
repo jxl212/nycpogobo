@@ -134,6 +134,8 @@ async def on_message(message):
 		return
 
 	print(the_message_data)
+	groupme_test_bot.post(text=format_for_groupme(message.clean_content))
+
 	if the_message_data.boro.lower() in ["manhattan"] and (the_message_data.is_raid() == False):
 		channel_name="manhattan"
 		# print(the_message_data)
