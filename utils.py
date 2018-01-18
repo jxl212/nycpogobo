@@ -32,6 +32,8 @@ groupme_test_bot.post(text="I am alive....!")
 def groupme_test_bot_post(txt):
 	groupme_test_bot.post(text=text)
 
+
+
 def format_for_groupme(content):
 	content = str(content).split("\n")
 	if len(content)>3:

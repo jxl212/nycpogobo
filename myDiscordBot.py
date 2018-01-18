@@ -6,7 +6,7 @@ from discord.ext.commands import Bot
 from discord.ext import commands
 from termcolor import cprint, colored
 import messagecontent
-from utils import process_message_for_groupme
+from utils import process_message_for_groupme, groupme_test_bot_post
 from poke_stats import *
 
 
